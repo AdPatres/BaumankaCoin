@@ -27,3 +27,9 @@
 *.exe
 *.out
 *.app
+
+# Build directory
+build/*
+
+# IDE settings liles
+.vscode/*

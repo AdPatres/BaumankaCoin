@@ -1,15 +1,34 @@
 #include <cstdlib>
+#include <iostream>
+#include <string>
 
-#include "network.hpp"
+bool 
+cmd_proc(std::string&);
 
-
-boost::asio::io_service ios;
-
-int
-main()
+int 
+main() 
 {
-  network::server srv(ios);
-  srv.start_accept();
+  std::string cmd;
+
+  do
+    {
+      std::cout << "AdPatres > ";
+      std::cin >> cmd;
+    } 
+  while (cmd_proc(cmd));
 
   return EXIT_SUCCESS;
+}
+
+bool
+cmd_proc(std::string& cmd)
+{
+  if (cmd == "quit")
+    {
+        std::cout << "quitting";
+        return false;
+    }
+  else
+    std::cout << "unknown command" << std::endl;
+  return true;
 }
