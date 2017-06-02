@@ -9,7 +9,7 @@ namespace ad_patresd
   class server
   {
   public:
-    server();
+    server(unsigned short);
 
     ~server();
 

@@ -24,7 +24,7 @@ namespace ad_patresd
 } // ad_patres
 
 void
-start();
+start(unsigned short);
 
 void 
 stop();

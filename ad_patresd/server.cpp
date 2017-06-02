@@ -4,10 +4,10 @@
 
 using namespace ad_patresd;
 
-server::server()
+server::server(unsigned short port)
 : m_acceptor(m_ios, 
               boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 
-                                            8333))
+                                            port))
 {
   start_accept();
   m_ios.run();
