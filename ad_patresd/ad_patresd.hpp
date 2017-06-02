@@ -1,8 +1,11 @@
 #pragma once
 
 #include <unistd.h>
+
 #include <exception>
 #include <string>
+
+#include "server.hpp"
 
 namespace ad_patresd
 {
