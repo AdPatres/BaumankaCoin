@@ -5,6 +5,9 @@
 bool 
 cmd_proc(std::string&);
 
+void 
+startd();
+
 int 
 main() 
 {
