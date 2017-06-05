@@ -22,6 +22,9 @@ namespace serverd
     write(const std::string&);
 
     void
+    send_buffer(const boost::asio::streambuf& msg);
+
+    void
     write_handler(const boost::system::error_code&, std::size_t);
 
   private:

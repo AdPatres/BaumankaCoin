@@ -1,6 +1,12 @@
 #include "server.hpp"
 
+#include "message.hpp"
+
+#include <streambuf>
+#include <iostream>
+
 #include <boost/bind.hpp>
+#include <boost/archive/binary_oarchive.hpp>
 
 using namespace serverd;
 
@@ -34,7 +40,13 @@ server::handle_accept(const boost::system::error_code& error,
 {
   this->start_accept();
   if (!error)
-    peer_ptr->write(std::to_string(peer_ptr->socket().remote_endpoint().port())+'\n');
+    {
+      net_addr addr(peer_ptr->socket().local_endpoint());
+      boost::asio::streambuf buf;
+      boost::archive::binary_oarchive arch(buf);
+      arch & addr;
+      peer_ptr->send_buffer(buf);
+    }
 }
 
 void
