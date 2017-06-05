@@ -8,7 +8,7 @@
 
 #include "ad_patresd.hpp"
 
-using namespace ad_patresd;
+using namespace serverd;
 
 std::unique_ptr<server> g_server_ptr;
 

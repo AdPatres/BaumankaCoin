@@ -2,7 +2,7 @@
 
 #include <boost/bind.hpp>
 
-using namespace ad_patresd;
+using namespace serverd;
 
 peer::peer(boost::asio::io_service& ios)
 : m_socket(ios)

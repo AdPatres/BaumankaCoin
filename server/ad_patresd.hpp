@@ -7,7 +7,7 @@
 
 #include "server.hpp"
 
-namespace ad_patresd
+namespace serverd
 {
   const std::string g_pid_fname = "/var/run/user/" + std::to_string(getuid()) 
                                   + "/ad_patresd.pid";

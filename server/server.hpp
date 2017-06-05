@@ -4,7 +4,7 @@
 
 #include <boost/asio.hpp>
 
-namespace ad_patresd
+namespace serverd
 {
   class server
   {

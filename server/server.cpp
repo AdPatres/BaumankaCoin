@@ -2,7 +2,7 @@
 
 #include <boost/bind.hpp>
 
-using namespace ad_patresd;
+using namespace serverd;
 
 server::server(unsigned short port)
 : m_acceptor(m_ios, 

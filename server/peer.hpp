@@ -4,7 +4,7 @@
 
 #include <boost/asio.hpp>
 
-namespace ad_patresd
+namespace serverd
 {
   class peer
   {
@@ -28,6 +28,5 @@ namespace ad_patresd
     peer(boost::asio::io_service&);
 
     boost::asio::ip::tcp::socket m_socket;
-    
   };
 } // namespace ad_patresd
