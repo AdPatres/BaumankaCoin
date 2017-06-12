@@ -2,9 +2,10 @@
 
 #include "message.hpp"
 
+#include <iostream>
 #include <memory> // shared_ptr
+#include <utility>
 
-#include <boost/archive/binary_oarchive.hpp>
 #include <boost/asio.hpp>
 
 namespace serverd
@@ -22,15 +23,12 @@ namespace serverd
     socket()
     { return m_sock; }
 
-    void
-    send(const messages::message& msg) // WTF only in header?
-    {
-      boost::asio::streambuf buf;
-      boost::archive::binary_oarchive oa(buf);
-      oa << msg;
-      m_sock.send(buf.data());
-      std::cerr << "sended\n";
-    }
+    template<typename Message>
+      void
+      send(const Message& payload); // send message
+
+    std::pair<std::string, messages::payload_t>
+    receive(); // receive message, return <command, payload>
 
   private:
     connection(boost::asio::io_service&);
@@ -38,4 +36,15 @@ namespace serverd
     boost::asio::ip::tcp::socket m_sock;
   };
 
+  template<typename Message>
+    void
+    connection::send(const Message& msg)
+    {
+      messages::payload_t payload;
+      payload << msg;
+      m_sock.send(boost::asio::buffer(msg.command, sizeof(msg.command)));
+      uint32_t size = static_cast<uint32_t>(payload.size());
+      m_sock.send(boost::asio::buffer(&size, sizeof(size)));
+      m_sock.send(boost::asio::buffer(payload.data(), payload.size()));
+    }
 } // namespace serverd

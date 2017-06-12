@@ -19,4 +19,4 @@ add_library (connection connection.cpp connection.hpp)
 add_subdirectory (messages)
 
 add_executable (adpatresd main.cpp)
-target_link_libraries (adpatresd ${EXTRA_LIBS} server fpid connection messages)
+target_link_libraries (adpatresd ${EXTRA_LIBS} pthread server fpid connection messages)

@@ -4,7 +4,6 @@
 
 #include <cstdint> // uint16_t
 #include <memory> // unique_ptr
-#include <iostream> 
 
 #include <boost/asio.hpp> 
 
@@ -26,11 +25,17 @@ namespace serverd
     stop(); // stop io & acceptor
 
     void 
-    accept();
+    accept(); // listen messages
+
+    void
+    connect(const boost::asio::ip::tcp::endpoint&); // update info from network
 
   private:
     void
-    handle_accept(const boost::system::error_code&, connection::pointer);
+    m_handle_accept(const boost::system::error_code&, connection::pointer);
+
+    void
+    m_handle_connect(const boost::system::error_code&, connection::pointer);
 
     boost::asio::io_service m_ios;
     boost::asio::ip::tcp::acceptor m_acceptor;

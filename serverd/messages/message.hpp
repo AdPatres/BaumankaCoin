@@ -1,49 +1,34 @@
 #pragma once
 
+#include <array>
 #include <cstdint>
 #include <iostream>
 #include <vector>
 
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/asio.hpp>
-#include <boost/serialization/vector.hpp>
+#include <boost/asio/streambuf.hpp>
 
 namespace messages
 {
-  class message
-  {
-  public:
-    template<typename Payload>
-      message(const std::string&, const Payload& payload);
+  using payload_t = std::vector<uint8_t>; // bytes
 
-  private:
-    friend class boost::serialization::access;
-    template<class Archive>
-      void 
-      serialize(Archive & ar, const unsigned int version)
-      {
-        ar & m_command;
-        ar & m_payload;
-      }
+  const uint8_t command_size = 12;
 
-    std::string           m_command;
-    std::vector<uint8_t>  m_payload;
-  };
-
-   template<typename Payload>
-    message::message(const std::string& cmd, const Payload& payload)
-    : m_command(cmd)
+  template<typename Message>
+    Message
+    create(const payload_t& payload)
     {
-      boost::asio::streambuf stbuf;
-      std::iostream iost(&stbuf);
-      iost << payload;
-      std::cerr << "echoed\n";
-      while (iost)
-        {
-          uint8_t byte;
-          iost >> byte;
-          m_payload.push_back(byte);
-        }
+      boost::asio::streambuf buf;
+      std::iostream ios(&buf);
+      for (auto byte : payload)
+        ios << byte;
+      Message msg;
+      ios >> msg;
+      return std::move(msg);
     }
 } // namespace messages
+
+std::array<uint8_t, sizeof(uint16_t)>
+itobs(uint16_t val);
+
+std::array<uint8_t, sizeof(uint32_t)>
+itobl(uint32_t val);

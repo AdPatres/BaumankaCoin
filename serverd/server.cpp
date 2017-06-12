@@ -5,6 +5,7 @@
 #include <boost/bind.hpp>
 
 #include <exception>
+#include <fstream>
 
 namespace serverd
 {
@@ -14,9 +15,17 @@ namespace serverd
 using namespace serverd;
 using namespace boost::asio::ip;
 
-server::server(uint16_t port)
-: m_acceptor(m_ios, tcp::endpoint(tcp::v4(), port))
-{ }
+server::server(uint16_t acc_port)
+: m_acceptor(m_ios, tcp::endpoint(tcp::v4(), acc_port))
+{ 
+  // ask for other peers
+  std::fstream fst("hosts");
+  std::string ip, port;
+  fst >> ip >> port;
+  tcp::endpoint endp = *tcp::resolver(m_ios).resolve(
+    tcp::resolver::query(tcp::v4(), ip, port));
+  this->connect(endp);
+}
 
 void
 server::start()
@@ -40,20 +49,61 @@ server::accept()
   if (!m_acceptor.is_open())
     m_acceptor.listen();
   m_acceptor.async_accept(new_conn_ptr->socket(), 
-    boost::bind(&server::handle_accept, this, 
+    boost::bind(&server::m_handle_accept, this, 
       boost::asio::placeholders::error, new_conn_ptr));
 }
 
 void
-server::handle_accept(const boost::system::error_code& error, 
-  connection::pointer conn_ptr)
+server::m_handle_accept(const boost::system::error_code& ec, 
+  connection::pointer peer_ptr)
+try
 {
   this->accept();
-  if (!error)
+  if (ec) throw std::runtime_error(ec.message());
+
+  auto msg = peer_ptr->receive();
+  if (msg.first == "version")
     {
-      messages::version vermsg;
-      messages::message ms("version", vermsg);
-      conn_ptr->send(ms);
-      std::cerr << "sended\n";
+      auto version = messages::create<messages::version>(msg.second);
+      version.addr_from.ip = 
+        peer_ptr->socket().remote_endpoint().address().to_v4().to_bytes();
+      assert(version.addr_recv.port == m_acceptor.local_endpoint().port());
+
+      peer_ptr->send(messages::verack());
+      peer_ptr->send(messages::version(peer_ptr->socket().remote_endpoint(),
+        m_acceptor.local_endpoint().port()));
+      msg = peer_ptr->receive();
+      assert(msg.first == "verack");
     }
 }
+catch (std::exception& e)
+{ std::cerr << e.what() << std::endl; }
+
+void
+server::connect(const tcp::endpoint& endp)
+{
+  connection::pointer peer_ptr = connection::create(m_ios);
+  peer_ptr->socket().async_connect(endp, boost::bind(&server::m_handle_connect,
+    this, boost::asio::placeholders::error, peer_ptr));
+}
+
+void
+server::m_handle_connect(const boost::system::error_code& ec, 
+  connection::pointer peer_ptr)
+try
+{
+  if (ec) throw std::runtime_error(ec.message());
+
+  peer_ptr->send(messages::version(peer_ptr->socket().remote_endpoint(), 
+    m_acceptor.local_endpoint().port()));
+  auto msg = peer_ptr->receive();
+  assert(msg.first == "verack");
+
+  msg = peer_ptr->receive();
+  assert(msg.first == "version");
+  auto version = messages::create<messages::version>(msg.second);
+  assert(version.addr_recv.port == peer_ptr->socket().local_endpoint().port());
+  peer_ptr->send(messages::verack());
+}
+catch (std::exception& e)
+{ std::cerr << e.what() << std::endl; }

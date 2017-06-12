@@ -1,15 +1,40 @@
 #include "version.hpp"
 
-using namespace messages;
+#include <ctime>
 
-version::version()
+using namespace messages;
+using namespace boost::asio::ip;
+
+version::version(tcp::endpoint endp, uint16_t port)
+: addr_recv{endp.address().to_v4().to_bytes(), static_cast<uint16_t>(endp.port())}
 {
   std::srand(std::time(0));
-  m_nonce = static_cast<uint64_t>(std::rand());
+  nonce = static_cast<uint64_t>(std::rand());
+  addr_from.ip = {0x7f, 0x00, 0x00, 0x01 };
+  addr_from.port = port;
 }
 
-std::ostream& operator<<(std::ostream& os, const version& obj)
+payload_t& 
+operator<<(payload_t& vec, const version& obj)
 {
-  os.write(reinterpret_cast<const char*>(&obj.m_nonce), sizeof(obj.m_nonce));
-  return os; 
+  vec << obj.addr_recv << obj.addr_from;
+  for (auto byte : itobl(obj.nonce))
+    vec.push_back(byte);
+  return vec; 
 }
+
+std::istream&
+operator>>(std::istream& is, messages::version& obj)
+{
+  is >> obj.addr_recv >> obj.addr_from;
+  is.read(reinterpret_cast<char*>(&obj.nonce), sizeof(obj.nonce));
+  return is;
+}
+
+payload_t& 
+operator<<(payload_t& vec, const verack& obj)
+{ return vec; }
+
+std::istream& 
+operator<<(std::istream& is, messages::verack& obj)
+{ return is; }
