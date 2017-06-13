@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "blockchain.h"
 
 
@@ -183,7 +182,7 @@ bool Blockchain::validateTxn(const Transaction& txn, std::vector<std::pair<Outpu
 		restore(toRestore);
 		return false;
 	}
-	if (!validateTails)
+	if (!validateTails(txn, sum))
 	{
 		restore(toRestore);
 		return false;

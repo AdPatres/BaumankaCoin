@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "wallet.h"
 
 using namespace Botan;
@@ -77,7 +76,8 @@ void Wallet::setCurrentSum()
 				sum += chain.blockChain[i.output.blockNumber].txs[i.output.txeNumber].tails[j].getInfo().first;
 	}
 }
-Wallet::Wallet():thePrivateKey(AutoSeeded_RNG(), EC_Group("secp256k1"))
+Wallet::Wallet()
+// :thePrivateKey(AutoSeeded_RNG(), EC_Group("secp256k1"))
 {
 	AutoSeeded_RNG rng;
 	encPrivateKey = PKCS8::BER_encode(thePrivateKey);// rng, "default"/* const std::string &password, const std::string &pbe_algo = ""*/);

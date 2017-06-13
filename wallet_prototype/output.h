@@ -1,4 +1,6 @@
 #pragma once
+#include <cstdlib>
+
 struct Output
 {
 	Output() = default;

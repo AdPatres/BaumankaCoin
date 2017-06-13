@@ -29,7 +29,9 @@ private:
 	void readTails(std::istream& is, std::ostream& os);
 	secure_vector<byte> encPrivateKey;
 	std::vector<byte> publicKey;
-	ECDSA_PrivateKey thePrivateKey;
+	AutoSeeded_RNG aga;
+	EC_Group faf = EC_Group("secp256k1");
+	ECDSA_PrivateKey thePrivateKey = ECDSA_PrivateKey(aga, faf);
 	secure_vector<byte> address;
 	size_t sum;
 	Transaction current;

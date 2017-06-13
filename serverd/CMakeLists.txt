@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 3.0)
 
 project (AdPatres)
 
-find_package (Boost REQUIRED system serialization)
+find_package (Boost REQUIRED system)
 if (Boost_FOUND)
   include_directories (${Boost_INCLUDE_DIRS})
   set (Boost_USE_STATIC_LIBS OFF)

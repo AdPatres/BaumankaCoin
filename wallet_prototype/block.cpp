@@ -1,11 +1,8 @@
-#include "stdafx.h"
 #include "block.h"
 
 
 
-Block::Block()
-{
-}
+
 bool Block::addFirstTxe(secure_vector<byte> address)
 {
 	if (txs.size() != 0 || txsCount != 0)

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "tail.h"
 
 Tail::Tail(size_t integer, secure_vector<byte> destination)

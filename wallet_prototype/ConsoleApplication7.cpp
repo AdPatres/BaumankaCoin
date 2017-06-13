@@ -1,7 +1,6 @@
-// ConsoleApplication5.cpp: определяет точку входа для консольного приложения.
+// ConsoleApplication5.cpp: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
 //
 
-#include "stdafx.h"
 #include <iostream>
 #include <vector>
 #include <botan/sha2_32.h>
@@ -13,6 +12,8 @@ secure_vector<byte> somefunction(std::vector<byte> input) {
 	SHA_256 sha;
 	return sha.process(input);
 }
+std::vector<AddedOutput> Transaction::availibleTxes;
+std::vector<Transaction> Block::nonValidated;
 
 
 	int main(int argc, char *argv[])

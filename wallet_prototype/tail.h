@@ -1,5 +1,5 @@
 #pragma once
-#include <botan\botan.h>
+#include <botan/botan.h>
 #include <assert.h>
 using namespace Botan;
 class Tail

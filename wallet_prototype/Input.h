@@ -1,7 +1,7 @@
 #pragma once
 #include "output.h"
 #include <botan/botan.h>
-#include <botan\sha2_32.h>
+#include <botan/sha2_32.h>
 
 using namespace Botan;
 class Input
@@ -22,10 +22,4 @@ private:
 	size_t tailNum;
 };
 
-void converter32to8(size_t from, std::vector<uint8_t>& to)
-{
-	for (auto i = 3; i >= 0; i--)
-	{
-		to.push_back((uint8_t)from >> 8 * i);
-	}
-}
+void converter32to8(size_t from, std::vector<uint8_t>& to);
