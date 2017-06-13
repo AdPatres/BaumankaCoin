@@ -24,7 +24,7 @@ server::server(uint16_t acc_port)
   fst >> ip >> port;
   tcp::endpoint endp = *tcp::resolver(m_ios).resolve(
     tcp::resolver::query(tcp::v4(), ip, port));
-  this->connect(endp);
+  this->connect(endp, boost::bind(&server::m_handshake, this, _1, _2));
 }
 
 void
@@ -80,15 +80,16 @@ catch (std::exception& e)
 { std::cerr << e.what() << std::endl; }
 
 void
-server::connect(const tcp::endpoint& endp)
+server::connect(const boost::asio::ip::tcp::endpoint& endp,
+  server::ConnectHandler cb)
 {
   connection::pointer peer_ptr = connection::create(m_ios);
-  peer_ptr->socket().async_connect(endp, boost::bind(&server::m_handle_connect,
-    this, boost::asio::placeholders::error, peer_ptr));
+  peer_ptr->socket().async_connect(endp, boost::bind(cb,
+    boost::asio::placeholders::error, peer_ptr));
 }
 
 void
-server::m_handle_connect(const boost::system::error_code& ec, 
+server::m_handshake(const boost::system::error_code& ec, 
   connection::pointer peer_ptr)
 try
 {

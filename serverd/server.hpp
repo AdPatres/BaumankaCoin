@@ -4,14 +4,19 @@
 
 #include <cstdint> // uint16_t
 #include <memory> // unique_ptr
+#include <functional>
 
 #include <boost/asio.hpp> 
+#include <boost/bind.hpp>
 
 namespace serverd
 {
   class server
   {
   public:
+    using ConnectHandler = 
+      std::function<void(const boost::system::error_code&, connection::pointer)>;
+
     explicit
     server(uint16_t);
 
@@ -28,14 +33,14 @@ namespace serverd
     accept(); // listen messages
 
     void
-    connect(const boost::asio::ip::tcp::endpoint&); // update info from network
+    connect(const boost::asio::ip::tcp::endpoint& endp, ConnectHandler cb);
 
   private:
     void
     m_handle_accept(const boost::system::error_code&, connection::pointer);
 
     void
-    m_handle_connect(const boost::system::error_code&, connection::pointer);
+    m_handshake(const boost::system::error_code&, connection::pointer);
 
     boost::asio::io_service m_ios;
     boost::asio::ip::tcp::acceptor m_acceptor;
