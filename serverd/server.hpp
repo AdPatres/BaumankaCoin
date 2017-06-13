@@ -1,10 +1,13 @@
 #pragma once
 
 #include "connection.hpp"
+#include "messages/net_addr.hpp"
 
-#include <cstdint> // uint16_t
-#include <memory> // unique_ptr
-#include <functional>
+#include <cstdint>      // uint16_t
+#include <forward_list>
+#include <functional>   // function
+#include <memory>       // unique_ptr
+#include <vector>
 
 #include <boost/asio.hpp> 
 #include <boost/bind.hpp>
@@ -37,13 +40,21 @@ namespace serverd
 
   private:
     void
-    m_handle_accept(const boost::system::error_code&, connection::pointer);
+    m_handle_accept (const boost::system::error_code&, connection::pointer);
 
     void
-    m_handshake(const boost::system::error_code&, connection::pointer);
+    m_handshake     (const boost::system::error_code&, connection::pointer);
 
-    boost::asio::io_service m_ios;
-    boost::asio::ip::tcp::acceptor m_acceptor;
+    void
+    m_getaddr       (const boost::system::error_code&, connection::pointer);
+
+    messages::addr
+    m_make_addrs(const boost::asio::ip::tcp::endpoint& endp);
+
+    boost::asio::io_service               m_ios;
+    boost::asio::ip::tcp::acceptor        m_acceptor;
+
+    std::forward_list<messages::net_addr> m_peers;
   };
   extern std::unique_ptr<server> g_server_ptr;
 } // namespace serverd

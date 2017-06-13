@@ -25,6 +25,16 @@ namespace messages
       ios >> msg;
       return std::move(msg);
     }
+
+  template<class Container>
+    payload_t
+    to_array(const Container& arr)
+    {
+      payload_t payload;
+      for (auto el : arr)
+        payload << el;
+      return std::move(payload);
+    }
 } // namespace messages
 
 std::array<uint8_t, sizeof(uint16_t)>
