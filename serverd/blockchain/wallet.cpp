@@ -117,3 +117,11 @@ Wallet::Wallet(secure_vector<byte> priv, std::vector<byte> pub) : encPrivateKey(
 Wallet::~Wallet()
 {
 }
+
+secure_vector<byte>
+Wallet::getLastBlockHash() // TODO: mutex
+{
+	return chain.blockChain.size() != 0 
+		? SHA_256().process(chain.blockChain.back().getBlockData()) 
+		: SHA_256().process(Block().getBlockData());
+} 

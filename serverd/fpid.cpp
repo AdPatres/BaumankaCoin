@@ -27,11 +27,11 @@ fpid::~fpid()
 bool
 fpid::write()
 {
-  if (::lockf(m_fd, F_TLOCK, 0) == -1)
-    return false;
+  // if (::lockf(m_fd, F_TLOCK, 0) == -1)
+  //   return false;
   
-  std::string pid_str = std::to_string(getpid()) + '\n';
-  ::write(m_fd, pid_str.c_str(), pid_str.length());
+  // std::string pid_str = std::to_string(getpid()) + '\n';
+  // ::write(m_fd, pid_str.c_str(), pid_str.length());
   return true;
 }
 

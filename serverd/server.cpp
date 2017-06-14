@@ -1,6 +1,7 @@
 #include "server.hpp"
 
 #include "messages/version.hpp"
+#include "messages/getblocks.hpp"
 
 #include <boost/bind.hpp>
 
@@ -23,6 +24,16 @@ template<typename Value, class Container>
     for (auto el : c)
       if (el == v) return true;
     return false;
+  }
+
+template<class Container>
+  messages::blockhash_t
+  to_hash(const Container& arr)
+  {
+    messages::blockhash_t payload;
+    for (const auto& el : arr)
+      payload.push_back(el);
+    return std::move(payload);
   }
 
 server::server(uint16_t acc_port)
@@ -88,8 +99,11 @@ try
       msg = peer_ptr->receive();
       assert(msg.first == "getaddr");
       peer_ptr->send(m_make_addr());
-      
       m_peers.push_front(version.addr_from);
+
+      msg = peer_ptr->receive();
+      assert(msg.first == "getblocks");
+      auto gb = messages::create<messages::getblocks>(msg.second);
     }
 }
 catch (std::exception& e)
@@ -134,6 +148,10 @@ try
     if (!find(m_peers, addr))
       this->connect(tcp::endpoint(address_v4(addr.ip), addr.port), 
         boost::bind(&server::m_handshake, this, _1, _2));
+
+  messages::getblocks gb;
+  gb.hash = to_hash(m_wallet.getLastBlockHash());
+  peer_ptr->send(gb);
 }
 catch (std::exception& e)
 { std::cerr << e.what() << std::endl; }

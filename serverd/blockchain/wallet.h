@@ -23,6 +23,7 @@ public:
 	void setAvailibleForAdress();
 	void setCurrentSum();
 	void createTxe(std::istream& is, std::ostream& os);
+	secure_vector<byte> getLastBlockHash();
 	~Wallet();
 private:
 	void readInputs(std::istream& is, std::ostream& os);

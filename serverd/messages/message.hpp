@@ -31,7 +31,7 @@ namespace messages
     to_array(const Container& arr)
     {
       payload_t payload;
-      for (auto el : arr)
+      for (const auto& el : arr)
         payload << el;
       return std::move(payload);
     }
