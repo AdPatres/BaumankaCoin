@@ -45,11 +45,8 @@ namespace serverd
     void
     m_handshake     (const boost::system::error_code&, connection::pointer);
 
-    void
-    m_getaddr       (const boost::system::error_code&, connection::pointer);
-
     messages::addr
-    m_make_addrs(const boost::asio::ip::tcp::endpoint& endp);
+    m_make_addr();
 
     boost::asio::io_service               m_ios;
     boost::asio::ip::tcp::acceptor        m_acceptor;

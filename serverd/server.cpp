@@ -84,11 +84,12 @@ try
         m_acceptor.local_endpoint().port()));
       msg = peer_ptr->receive();
       assert(msg.first == "verack");
+
+      msg = peer_ptr->receive();
+      assert(msg.first == "getaddr");
+      peer_ptr->send(m_make_addr());
+
       m_peers.push_front(version.addr_from);
-    }
-    else if (msg.first == "getaddr")
-    {
-      peer_ptr->send(m_make_addrs(peer_ptr->socket().remote_endpoint())); 
     }
 }
 catch (std::exception& e)
@@ -125,21 +126,8 @@ try
     peer_ptr->socket().remote_endpoint().address().to_v4().to_bytes();
   m_peers.push_front(version.addr_from);
 
-  this->connect(peer_ptr->socket().remote_endpoint(), 
-    boost::bind(&server::m_getaddr, this, _1, _2));
-}
-catch (std::exception& e)
-{ std::cerr << e.what() << std::endl; }
-
-void
-server::m_getaddr(const boost::system::error_code& ec, 
-  connection::pointer peer_ptr)
-try
-{
-  if (ec) throw std::runtime_error(ec.message());
-
   peer_ptr->send(messages::getaddr());
-  auto msg = peer_ptr->receive();
+  msg = peer_ptr->receive();
   assert(msg.first == "addr");
   auto addr_list = messages::create<messages::addr>(msg.second);
   for (auto addr : addr_list.addr_list)
@@ -151,12 +139,10 @@ catch (std::exception& e)
 { std::cerr << e.what() << std::endl; }
 
 messages::addr
-server::m_make_addrs(const tcp::endpoint& endp)
+server::m_make_addr()
 {
-  messages::net_addr except{ endp.address().to_v4().to_bytes(), endp.port() };
   messages::addr res;
   for (auto peer : m_peers)
-    if (peer != except)
-      res.addr_list.push_back(peer);
+    res.addr_list.push_back(peer);
   return std::move(res);
 }

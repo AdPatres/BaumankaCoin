@@ -16,5 +16,6 @@ connection::receive()
   messages::payload_t payload(size);
   m_sock.receive(boost::asio::buffer(payload.data(), size));
 
+  std::cerr << "get " << command << std::endl;
   return std::make_pair(command, std::move(payload));
 }

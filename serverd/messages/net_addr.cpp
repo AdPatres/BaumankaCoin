@@ -64,7 +64,7 @@ operator>>(std::istream& is, addr& obj)
     {
       messages::net_addr na;
       is >> na;
-      obj.addr_list.push_back(na);
+      obj.addr_list[i] = na;
     }
   return is; 
 }
