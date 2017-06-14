@@ -88,7 +88,7 @@ try
       msg = peer_ptr->receive();
       assert(msg.first == "getaddr");
       peer_ptr->send(m_make_addr());
-
+      
       m_peers.push_front(version.addr_from);
     }
 }

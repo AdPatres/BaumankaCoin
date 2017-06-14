@@ -20,6 +20,10 @@ start(uint16_t port);
 void
 stop();
 
+
+// std::vector<AddedOutput> Transaction::availibleTxes;
+// std::vector<Transaction> Block::nonValidated;
+
 int
 main(int argc, char* argv[]) try
 {

@@ -9,4 +9,3 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 
 add_subdirectory (serverd)
 add_subdirectory (cli)
-add_subdirectory (wallet_prototype)

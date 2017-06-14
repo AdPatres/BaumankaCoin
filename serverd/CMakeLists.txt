@@ -10,13 +10,17 @@ if (Boost_FOUND)
   set (EXTRA_LIBS ${EXTRA_LIBS} ${Boost_LIBRARIES})
 endif (Boost_FOUND)
 
+include_directories (blockchain)
 include_directories (messages)
+include_directories (/usr/local/include/botan-2)
+link_directories(/usr/local/lib/)
 
 add_library (server server.cpp server.hpp)
 add_library (fpid fpid.cpp fpid.hpp)
 add_library (connection connection.cpp connection.hpp)
 
 add_subdirectory (messages)
+add_subdirectory (blockchain)
 
 add_executable (adpatresd main.cpp)
-target_link_libraries (adpatresd ${EXTRA_LIBS} pthread server fpid connection messages)
+target_link_libraries (adpatresd ${EXTRA_LIBS} pthread server fpid connection messages wallet botan-2)

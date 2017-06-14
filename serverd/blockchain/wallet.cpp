@@ -1,5 +1,8 @@
 #include "wallet.h"
 
+std::vector<AddedOutput> Transaction::availibleTxes;
+std::vector<Transaction> Block::nonValidated;
+
 using namespace Botan;
 
 void Wallet::setAvailibleForAdress()

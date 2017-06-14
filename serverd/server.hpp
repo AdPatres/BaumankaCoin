@@ -2,6 +2,7 @@
 
 #include "connection.hpp"
 #include "messages/net_addr.hpp"
+#include "blockchain/wallet.h"
 
 #include <cstdint>      // uint16_t
 #include <forward_list>
@@ -52,6 +53,8 @@ namespace serverd
     boost::asio::ip::tcp::acceptor        m_acceptor;
 
     std::forward_list<messages::net_addr> m_peers;
+
+    Wallet                                m_wallet;
   };
   extern std::unique_ptr<server> g_server_ptr;
 } // namespace serverd

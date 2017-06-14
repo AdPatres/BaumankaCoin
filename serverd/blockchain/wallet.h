@@ -42,4 +42,3 @@ private:
 	//PKCS8* priv;
 	//X509* pub;
 };
-
