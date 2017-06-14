@@ -104,6 +104,22 @@ try
       msg = peer_ptr->receive();
       assert(msg.first == "getblocks");
       auto gb = messages::create<messages::getblocks>(msg.second);
+      if (gb.hash == SHA_256().process(Block().getBlockData()))
+        {
+          // share blockchain
+        }
+      else 
+        {
+          auto block_id = m_wallet.findByHash(gb.hash);
+          if (block_id > -1)
+            {
+              // inv with blocks after block_id
+            }
+          else if (block_id == -1)
+            {
+              // return my last block hash
+            }
+        }
     }
 }
 catch (std::exception& e)
@@ -152,6 +168,15 @@ try
   messages::getblocks gb;
   gb.hash = to_hash(m_wallet.getLastBlockHash());
   peer_ptr->send(gb);
+  msg = peer_ptr->receive();
+  if (msg.first == "inv")
+    {
+
+    }
+  else if (msg.first == "notfound")
+    {
+
+    }
 }
 catch (std::exception& e)
 { std::cerr << e.what() << std::endl; }

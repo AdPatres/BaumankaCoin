@@ -125,3 +125,14 @@ Wallet::getLastBlockHash() // TODO: mutex
 		? SHA_256().process(chain.blockChain.back().getBlockData()) 
 		: SHA_256().process(Block().getBlockData());
 } 
+
+int64_t 
+Wallet::findByHash(secure_vector<byte> hash)
+{
+	for (int64_t i = 0; i < chain.blockChain.size(); ++i)
+		{
+			if (SHA_256().process(chain.blockChain[i].getBlockData()) == hash)
+				return i;
+		}
+	return -1;
+}

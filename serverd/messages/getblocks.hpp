@@ -2,11 +2,13 @@
 
 #include "message.hpp"
 
+#include <botan/botan.h>
+
 #include <vector>
 
 namespace messages
 {
-  using blockhash_t = std::vector<uint8_t>; 
+  using blockhash_t = Botan::secure_vector<unsigned char>; 
 
   struct getblocks
   {

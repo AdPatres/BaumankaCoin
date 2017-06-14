@@ -24,6 +24,7 @@ public:
 	void setCurrentSum();
 	void createTxe(std::istream& is, std::ostream& os);
 	secure_vector<byte> getLastBlockHash();
+	int64_t findByHash(secure_vector<byte>);
 	~Wallet();
 private:
 	void readInputs(std::istream& is, std::ostream& os);
