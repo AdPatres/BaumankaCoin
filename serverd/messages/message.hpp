@@ -6,10 +6,12 @@
 #include <vector>
 
 #include <boost/asio/streambuf.hpp>
+#include <botan/botan.h>
 
 namespace messages
 {
   using payload_t = std::vector<uint8_t>; // bytes
+  using hash_t = Botan::secure_vector<uint8_t>;
 
   const uint8_t command_size = 12;
 

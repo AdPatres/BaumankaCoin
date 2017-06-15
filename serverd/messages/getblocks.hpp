@@ -2,17 +2,13 @@
 
 #include "message.hpp"
 
-#include <botan/botan.h>
-
 #include <vector>
 
 namespace messages
 {
-  using blockhash_t = Botan::secure_vector<unsigned char>; 
-
   struct getblocks
   {
-    blockhash_t hash;
+    hash_t hash;
     const char  command[command_size] = "getblocks";
   };
 } // namespace messages

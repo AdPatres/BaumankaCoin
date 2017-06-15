@@ -1,7 +1,7 @@
 #include "server.hpp"
 
-#include "messages/version.hpp"
 #include "messages/getblocks.hpp"
+#include "messages/version.hpp"
 
 #include <boost/bind.hpp>
 
@@ -24,16 +24,6 @@ template<typename Value, class Container>
     for (auto el : c)
       if (el == v) return true;
     return false;
-  }
-
-template<class Container>
-  messages::blockhash_t
-  to_hash(const Container& arr)
-  {
-    messages::blockhash_t payload;
-    for (const auto& el : arr)
-      payload.push_back(el);
-    return std::move(payload);
   }
 
 server::server(uint16_t acc_port)
@@ -84,43 +74,9 @@ try
 
   auto msg = peer_ptr->receive();
   if (msg.first == "version")
-    {
-      auto version = messages::create<messages::version>(msg.second);
-      version.addr_from.ip = 
-        peer_ptr->socket().remote_endpoint().address().to_v4().to_bytes();
-      assert(version.addr_recv.port == m_acceptor.local_endpoint().port());
-
-      peer_ptr->send(messages::verack());
-      peer_ptr->send(messages::version(peer_ptr->socket().remote_endpoint(),
-        m_acceptor.local_endpoint().port()));
-      msg = peer_ptr->receive();
-      assert(msg.first == "verack");
-
-      msg = peer_ptr->receive();
-      assert(msg.first == "getaddr");
-      peer_ptr->send(m_make_addr());
-      m_peers.push_front(version.addr_from);
-
-      msg = peer_ptr->receive();
-      assert(msg.first == "getblocks");
-      auto gb = messages::create<messages::getblocks>(msg.second);
-      if (gb.hash == SHA_256().process(Block().getBlockData()))
-        {
-          // share blockchain
-        }
-      else 
-        {
-          auto block_id = m_wallet.findByHash(gb.hash);
-          if (block_id > -1)
-            {
-              // inv with blocks after block_id
-            }
-          else if (block_id == -1)
-            {
-              // return my last block hash
-            }
-        }
-    }
+    m_handle_version(peer_ptr, messages::create<messages::version>(msg.second));
+  else if (msg.first == "inv")
+    m_handle_inv(peer_ptr, messages::create<messages::inv>(msg.second));
 }
 catch (std::exception& e)
 { std::cerr << e.what() << std::endl; }
@@ -166,17 +122,18 @@ try
         boost::bind(&server::m_handshake, this, _1, _2));
 
   messages::getblocks gb;
-  gb.hash = to_hash(m_wallet.getLastBlockHash());
+  gb.hash = m_wallet.getLastBlockHash();
   peer_ptr->send(gb);
   msg = peer_ptr->receive();
-  if (msg.first == "inv")
+  assert(msg.first == "inv");
+  auto inv = messages::create<messages::inv>(msg.second);
+  if (inv.inventory.size() == 1 
+    && inv.inventory[0].type == messages::inv_vect::inv_type::error)
     {
-
+      // error
     }
-  else if (msg.first == "notfound")
-    {
-
-    }
+  else
+    m_handle_inv(peer_ptr, inv);
 }
 catch (std::exception& e)
 { std::cerr << e.what() << std::endl; }
@@ -189,3 +146,95 @@ server::m_make_addr()
     res.addr_list.push_back(peer);
   return std::move(res);
 }
+
+void
+server::m_handle_inv(connection::pointer peer_ptr, const messages::inv& inv)
+{
+  messages::getdata getdata;
+  for (const auto& iv : inv.inventory)
+    {
+      bool is_ok; // TODO: result of checking
+      if (is_ok)
+        getdata.inventory.push_back(iv);
+    }
+  peer_ptr->send(getdata);
+  
+  for (size_t i = 0; i < getdata.inventory.size(); ++i)
+    {
+      auto msg = peer_ptr->receive();
+      if (msg.first == "block")
+        {
+          // TODO: block message
+          // auto block = messages::create<messages::block>(msg.second);
+          // TODO: check block  & make smth
+        }
+      else if (msg.first == "tx")
+        {
+          // TODO: same for txes
+        }
+    }
+}
+
+void
+server::m_handle_version(connection::pointer peer_ptr, 
+  auto version)
+{
+  version.addr_from.ip = 
+    peer_ptr->socket().remote_endpoint().address().to_v4().to_bytes();
+  assert(version.addr_recv.port == m_acceptor.local_endpoint().port());
+
+  peer_ptr->send(messages::verack());
+  peer_ptr->send(messages::version(peer_ptr->socket().remote_endpoint(),
+    m_acceptor.local_endpoint().port()));
+  auto msg = peer_ptr->receive();
+  assert(msg.first == "verack");
+
+  msg = peer_ptr->receive();
+  assert(msg.first == "getaddr");
+  peer_ptr->send(m_make_addr());
+  m_peers.push_front(version.addr_from);
+
+  msg = peer_ptr->receive();
+  assert(msg.first == "getblocks");
+  auto gb = messages::create<messages::getblocks>(msg.second);
+
+  // 14 June
+  /*
+    if (gb.hash == SHA_256().process(Block().getBlockData()))
+      {
+        // share blockchain
+      }
+    else 
+      {
+        auto block_id = m_wallet.findByHash(gb.hash);
+        if (block_id > -1)
+          {
+            // inv with blocks after block_id
+          }
+        else if (block_id == -1)
+          {
+            // return my last block hash
+          }
+      }
+  */
+
+  // 15 June by Skalniy
+  auto block_id = m_wallet.findByHash(gb.hash);
+  messages::inv inv;
+  if (block_id > -1)
+    {
+      if (gb.hash == SHA_256().process(Block().getBlockData()))
+        block_id = -1;
+
+      // TODO: func returns container with hashes after (block_id)
+      //  i.e blocks in range (block_id+1 .. last)
+      auto hashes = std::vector<messages::hash_t>();
+      for (const auto& hash : hashes)
+        inv.inventory.push_back(messages::inv_vect{
+          messages::inv_vect::inv_type::msg_block, hash});
+    }
+  else
+      inv.inventory.push_back(messages::inv_vect{
+        messages::inv_vect::inv_type::error, m_wallet.getLastBlockHash()});
+  peer_ptr->send(inv);
+} // version msg

@@ -23,4 +23,4 @@ add_subdirectory (messages)
 add_subdirectory (blockchain)
 
 add_executable (adpatresd main.cpp)
-target_link_libraries (adpatresd ${EXTRA_LIBS} pthread server fpid connection version getblocks wallet botan-2)
+target_link_libraries (adpatresd ${EXTRA_LIBS} pthread server fpid connection version getblocks inv wallet botan-2)

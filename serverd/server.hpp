@@ -1,6 +1,7 @@
 #pragma once
 
 #include "connection.hpp"
+#include "messages/inv.hpp"
 #include "messages/net_addr.hpp"
 #include "blockchain/wallet.h"
 
@@ -48,6 +49,12 @@ namespace serverd
 
     messages::addr
     m_make_addr();
+
+    void
+    m_handle_inv      (connection::pointer, const messages::inv&);
+
+    void
+    m_handle_version  (connection::pointer, auto);
 
     boost::asio::io_service               m_ios;
     boost::asio::ip::tcp::acceptor        m_acceptor;
