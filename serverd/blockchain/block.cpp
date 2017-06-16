@@ -108,7 +108,7 @@ Block::~Block()
 }
 
 
-std::vector<uint8_t> Block::getBroadcastData()
+std::vector<uint8_t> Block::getBroadcastData() const
 {
 	std::vector<uint8_t> data = getBlockData();
 	for (auto txe : txs)

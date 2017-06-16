@@ -22,7 +22,7 @@ public:
 	std::vector<uint8_t> getTxeData(size_t) const; 
 	bool setMerkleRoot();
 	~Block();
-	std::vector<uint8_t> getBroadcastData();
+	std::vector<uint8_t> getBroadcastData() const;
 	bool scanBroadcastedData(std::vector<uint8_t>, uint32_t&);
 	void setNumber(size_t num) { currentNumber = num; }
 protected:

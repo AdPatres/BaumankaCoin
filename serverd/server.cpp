@@ -2,6 +2,7 @@
 
 #include "messages/getblocks.hpp"
 #include "messages/version.hpp"
+#include "messages/block.hpp"
 #include <botan/hex.h>
 
 #include <boost/bind.hpp>
@@ -211,6 +212,7 @@ server::m_handle_version(connection::pointer peer_ptr,
   auto gb = messages::create<messages::getblocks>(msg.second);
 
   messages::inv inv;
+  std::vector<messages::block_message> block_pool;
   if (gb.hash == SHA_256().process(Block().getBlockData()))
     {
       std::cerr << "make inv empty" << std::endl;
@@ -220,6 +222,8 @@ server::m_handle_version(connection::pointer peer_ptr,
         messages::inv_vect::inv_type::msg_block, 
         messages::hash_from_32(m_wallet.getBlockchainSize())
       });
+      for (const auto& block : m_wallet.getBlocksAfter(-1))
+        block_pool.push_back(messages::block_message{ block.getBroadcastData() });
     }
   else 
     {
@@ -236,4 +240,6 @@ server::m_handle_version(connection::pointer peer_ptr,
           messages::inv_vect::inv_type::error, m_wallet.getLastBlockHash()});
     }
   peer_ptr->send(inv);
+  for (const auto& b : block_pool)  
+    peer_ptr->send(b);
 }

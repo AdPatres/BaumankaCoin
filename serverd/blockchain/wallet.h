@@ -27,11 +27,13 @@ public:
 	secure_vector<byte> getLastBlockHash();
 	int64_t findByHash(secure_vector<byte>);
 	std::vector<secure_vector<byte>> getHashesAfter(uint64_t) const;
+	std::vector<Block> getBlocksAfter(uint64_t) const;
 	~Wallet();
 	uint32_t getBlockchainSize() const;
 	void customize(size_t numberOfBlocks, secure_vector<byte> address)
 	{ return chain.customize(numberOfBlocks, address); }
 	secure_vector<byte> getAddress() { return address;}
+	// Block& operator[](size_t idx) { return chain.blockChain[idx]; }
 private:
 	void readInputs(std::istream& is, std::ostream& os);
 	void readTails(std::istream& is, std::ostream& os);

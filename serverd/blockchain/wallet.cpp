@@ -143,8 +143,18 @@ Wallet::getHashesAfter(uint64_t idx) const
 	++idx;
 	std::vector<secure_vector<byte>> res(chain.blockChain.size() - idx);
 	size_t j = 0;
-	for (size_t i = idx; i < chain.blockChain.size(); ++i)
+	for (size_t i = idx; i < chain.blockChain.size(); ++i, ++j)
 		res[j] = SHA_256().process(chain.blockChain[i].getBlockData());
+	return std::move(res);
+}
+
+std::vector<Block> 
+Wallet::getBlocksAfter(uint64_t idx) const
+{
+	++idx;
+	std::vector<Block> res(chain.blockChain.size() - idx);
+	for (size_t i = idx, j = 0; i < chain.blockChain.size(); ++i, ++j)
+		res[j] = chain.blockChain[i];
 	return std::move(res);
 }
 
