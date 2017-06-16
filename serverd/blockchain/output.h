@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdlib>
+#include <iostream>
 
 struct Output
 {
@@ -11,3 +12,5 @@ struct Output
 	size_t txeNumber = 0;
 };
 
+std::ostream&
+operator<<(std::ostream& os, const Output& o);

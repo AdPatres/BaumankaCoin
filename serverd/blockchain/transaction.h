@@ -4,6 +4,8 @@
 #include <botan/ecdsa.h>
 #include <botan/auto_rng.h>//rand numb gen
 #include <botan/pubkey.h>//PK_SIGNER
+#include <iostream>
+#include <botan/hex.h>
 class Blockchain;
 class Wallet;
 
@@ -34,6 +36,16 @@ public:
 	std::vector<uint8_t> getTxeData() const;
 	~Transaction();
 
+	void showInfo() const {
+		std::cerr << "pubkey " << Botan::hex_encode(pubKey) << std::endl;
+		std::cerr << "signature " << Botan::hex_encode(signature) << std::endl; 
+		std::cerr << "inputs" << std::endl;
+		for (auto i : inputs)
+			std::cerr << i;
+		std::cerr << "tails" << std::endl;
+		for (auto i : tails)
+			std::cerr << i;
+	}
 protected:
 	std::vector<Input> inputs;
 	std::vector<Tail> tails;

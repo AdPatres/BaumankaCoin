@@ -5,6 +5,8 @@
 #include <vector>
 #include <stdlib.h>//itoa
 #include <botan/sha2_32.h>
+#include <iostream>
+#include <botan/hex.h>
 
 using namespace Botan;
 class Block
@@ -25,6 +27,13 @@ public:
 	std::vector<uint8_t> getBroadcastData() const;
 	bool scanBroadcastedData(std::vector<uint8_t>, uint32_t&);
 	void setNumber(size_t num) { currentNumber = num; }
+	uint32_t getCurrentNumber() const { return currentNumber; }
+	void showInfo() const
+	{
+		std::cerr << version << ' ' << currentNumber << ' ' << bits << ' ' << nonce << ' ' << txsCount << ' ' << Botan::hex_encode(merkleRoot) << std::endl;
+		for (auto a: txs)
+			a.showInfo();
+	}
 protected:
 	void setHash(std::vector<byte> from, uint32_t& position,
 		secure_vector<uint8_t>& to);

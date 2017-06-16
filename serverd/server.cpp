@@ -137,16 +137,17 @@ try
         }
       else if (inv.inventory[0].type == messages::inv_vect::inv_type::msg_block)
         {
-          std::cerr << std::to_string(inv.inventory[0].hash[0]) <<
-            std::to_string(inv.inventory[0].hash[1]) <<
-            std::to_string(inv.inventory[0].hash[2]) <<
-            std::to_string(inv.inventory[0].hash[3]) << std::endl;
           uint32_t amount = messages::hash_to_32(inv.inventory[0].hash);
-          std::cerr << "receiving " << std::to_string(amount) << " blocks" << std::endl;
           for (decltype(amount) i = 0; i < amount; ++i)
             {
               msg = peer_ptr->receive();
               assert(msg.first == "block");
+              auto block_msg = messages::create<messages::block_message>(msg.second);
+              Block block;
+              uint32_t position = 0;
+              block.scanBroadcastedData(block_msg.data, position);
+              block.showInfo();
+              std::cerr << "added " << m_wallet.addBlock(block) << ' '  <<m_wallet.getBlockchainSize() << std::endl;
             }
         }
     } 
@@ -223,18 +224,21 @@ server::m_handle_version(connection::pointer peer_ptr,
         messages::hash_from_32(m_wallet.getBlockchainSize())
       });
       for (const auto& block : m_wallet.getBlocksAfter(-1))
+      {
         block_pool.push_back(messages::block_message{ block.getBroadcastData() });
+        block.showInfo();
+      }
     }
   else 
     {
       std::cerr << "make inv from hash" << std::endl;
       auto block_id = m_wallet.findByHash(gb.hash);
+      std::cerr << "size " << m_wallet.getBlockchainSize()- block_id + 1 << std::endl;
       if (block_id > -1)
         inv.inventory.push_back(messages::inv_vect{
           messages::inv_vect::inv_type::msg_block, 
-          messages::hash_from_32(static_cast<uint32_t>(
-            m_wallet.getBlockchainSize() - block_id + 1)
-        )});
+          messages::hash_from_32(m_wallet.getBlockchainSize() - block_id + 1)
+        });
       else
         inv.inventory.push_back(messages::inv_vect{
           messages::inv_vect::inv_type::error, m_wallet.getLastBlockHash()});

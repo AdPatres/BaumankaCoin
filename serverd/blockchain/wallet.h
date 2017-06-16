@@ -33,7 +33,7 @@ public:
 	void customize(size_t numberOfBlocks, secure_vector<byte> address)
 	{ return chain.customize(numberOfBlocks, address); }
 	secure_vector<byte> getAddress() { return address;}
-	// Block& operator[](size_t idx) { return chain.blockChain[idx]; }
+	bool addBlock(Block& b){ return chain.addBlock(b); }
 private:
 	void readInputs(std::istream& is, std::ostream& os);
 	void readTails(std::istream& is, std::ostream& os);

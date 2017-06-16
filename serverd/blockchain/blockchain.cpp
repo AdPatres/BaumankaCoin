@@ -53,6 +53,7 @@ bool Blockchain::validateBlock(Block& block)
 	if (block.currentNumber != 0 
 		&& block.prevBlock != SHA_256().process(blockChain.back().getBlockData()))
 		return false;
+	std::cerr << "validate ok" << std::endl;
 	if (!validateMerkleRoot(block))
 		return false;
 	std::cerr << "validate ok" << std::endl;

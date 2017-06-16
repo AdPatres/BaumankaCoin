@@ -78,6 +78,10 @@ std::vector<uint8_t> Transaction::getTxeData() const
 	{
 		info.push_back(i);
 	}
+	for (auto i : signature)
+	{
+		info.push_back(i);
+	}
 	return info;
 }
 

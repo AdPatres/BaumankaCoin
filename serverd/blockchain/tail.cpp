@@ -1,5 +1,6 @@
 #include "tail.h"
 
+#include <botan/hex.h>
 Tail::Tail(size_t integer, secure_vector<byte> destination)
 {
 	intValue = integer;
@@ -67,4 +68,11 @@ bool Tail::scan(std::vector<uint8_t> data, uint32_t& position)
 		position++;
 	}
 	return true;
+}
+
+std::ostream&
+operator<<(std::ostream& os, const Tail& o)
+{
+	return os << "Tail " << o.intValue << "addr "
+		<< Botan::hex_encode(o.address) << std::endl;
 }
