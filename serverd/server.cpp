@@ -123,6 +123,8 @@ try
         boost::bind(&server::m_handshake, this, _1, _2));
 
   messages::getblocks gb;
+  gb.hash = m_wallet.getLastBlockHash();
+  peer_ptr->send(gb);
   msg = peer_ptr->receive();
   assert(msg.first == "inv");
   auto inv = messages::create<messages::inv>(msg.second);
