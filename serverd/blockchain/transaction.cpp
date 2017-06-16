@@ -93,3 +93,46 @@ bool Transaction::sign(ECDSA_PrivateKey key)
 Transaction::~Transaction()
 {
 }
+
+std::vector<uint8_t> Transaction::getBroadcastData()
+{
+	uint32_t inputsAmount= inputs.size();
+	uint32_t tailsAmount = tails.size();
+	std::vector<uint8_t> data;
+	converter32to8(inputsAmount, data);
+	converter32to8(tailsAmount, data);
+	std::vector<uint8_t> info = getTxeData();
+	for (auto c : info)
+		data.push_back(c);
+	return data;
+}
+bool Transaction::scanBroadcastedData(std::vector<uint8_t> data, uint32_t& position)
+{
+	uint32_t inputsAmount = converter8to32(data, position);
+	uint32_t tailsAmout = converter8to32(data, position);
+	for (uint32_t i = 0; i < inputsAmount; i++)
+	{
+		Input input;
+		input.scan(data, position);
+		inputs.push_back(input);
+	}
+	for (uint32_t i = 0; i < tailsAmout; i++)
+	{
+		Tail tail;
+		tail.scan(data, position);
+		tails.push_back(tail);
+	}
+	pubKey.clear();
+	for (uint32_t i = 0; i < 279; i++) // TODO: check size
+	{
+		pubKey.push_back(data[position]);
+		position++;
+	}
+	signature.clear();
+	for (uint32_t i = 0; i < 64; i++) // TODO: check size
+	{
+		signature.push_back(data[position]);
+		position++;
+	}
+	return true;
+}

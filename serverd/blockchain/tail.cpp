@@ -50,3 +50,21 @@ std::pair<size_t, secure_vector<byte>> Tail::getInfo() const
 Tail::~Tail()
 {
 }
+
+bool Tail::scan(std::vector<uint8_t> data, uint32_t& position)
+{
+	uint8_t a[4];
+	for (size_t i = 0; i < 4; i++)
+	{
+		a[i] = data[position + i];
+	}
+	intValue = *((uint32_t*)a);
+	position += 4;
+	address.clear();
+	for (uint32_t i = 0; i < 32; i++)
+	{
+		address.push_back(data[position]);
+		position++;
+	}
+	return true;
+}

@@ -12,6 +12,7 @@
 #include <botan/hash.h>//with sha2 for hashing
 #include "blockchain.h"
 #include <iostream>
+#include <vector>
 
 using namespace Botan;
 
@@ -25,6 +26,7 @@ public:
 	void createTxe(std::istream& is, std::ostream& os);
 	secure_vector<byte> getLastBlockHash();
 	int64_t findByHash(secure_vector<byte>);
+	std::vector<secure_vector<byte>> getHashesAfter(uint64_t) const;
 	~Wallet();
 private:
 	void readInputs(std::istream& is, std::ostream& os);

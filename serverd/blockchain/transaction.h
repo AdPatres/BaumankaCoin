@@ -29,14 +29,16 @@ public:
 	bool removeTail(Tail);
 	bool sign(ECDSA_PrivateKey);
 	bool addAvailibleTxe(Output, size_t);
-	void broadcastTxe();
+	bool scanBroadcastedData(std::vector<uint8_t> data, uint32_t& position);
+	std::vector<uint8_t> getBroadcastData();
 	std::vector<uint8_t> getTxeData() const;
 	~Transaction();
+
 protected:
 	std::vector<Input> inputs;
 	std::vector<Tail> tails;
-	std::vector<byte> pubKey;
-	std::vector<byte> signature;
+	std::vector<byte> pubKey = std::vector<byte>(279, 0);
+	std::vector<byte> signature = std::vector<byte>(64, 0);
 	static std::vector<AddedOutput> availibleTxes;
 };
 

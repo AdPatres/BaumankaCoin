@@ -105,3 +105,43 @@ bool Block::setMerkleRoot()
 Block::~Block()
 {
 }
+
+
+std::vector<uint8_t> Block::getBroadcastData()
+{
+	std::vector<uint8_t> data = getBlockData();
+	for (auto txe : txs)
+	{
+		std::vector<uint8_t> info = txe.getBroadcastData();
+		for (auto c : info)
+			data.push_back(c);
+	}
+	return data;
+}
+void Block::setHash(std::vector<byte> from, uint32_t& position, secure_vector<uint8_t>& to)
+{
+	to.clear();
+	for (uint32_t i = 0; i < 32; i++)
+	{
+		to.push_back(from[position + i]);
+	}
+	position += 32;
+}
+bool Block::scanBroadcastedData(std::vector<uint8_t> data, uint32_t& position)//make checks for amount of data;
+{
+	version = converter8to32(data, position);
+	setHash(data, position, prevBlock);
+	currentNumber = converter8to32(data, position);
+	setHash(data, position, merkleRoot);
+	bits = converter8to32(data, position);
+	nonce = converter8to32(data, position);
+	txsCount = converter8to32(data, position);
+	for (uint32_t i = 0; i < txsCount; i++)
+	{
+		Transaction txn;
+		txn.scanBroadcastedData(data, position);
+		txs.push_back(txn);
+	}
+	return true;
+
+}

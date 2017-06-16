@@ -46,11 +46,41 @@ std::pair<Output, size_t> Input::getInfo() const
 Input::~Input()
 {
 }
-
-void converter32to8(size_t from, std::vector<uint8_t>& to)
+bool Input::scan(std::vector<uint8_t> data, uint32_t& position)
 {
-	for (auto i = 3; i >= 0; i--)
+	output.blockNumber = converter8to32(data, position);
+	output.txeNumber = converter8to32(data, position);
+	outputHash.clear();
+	for (uint32_t i = 0; i < 32; i++)
 	{
-		to.push_back((uint8_t)from >> 8 * i);
+		outputHash.push_back(data[position]);
+		position++;
 	}
+	tailNum = converter8to32(data, position);
+	return true;
+}
+
+void converter32to8(uint32_t from, std::vector<uint8_t>& to)
+{
+	uint8_t b[4];
+	b[0] = (uint8_t)from;
+	b[1] = (uint8_t)(from >>= 8);
+	b[2] = (uint8_t)(from >>= 8);
+	b[3] = (uint8_t)(from >>= 8);
+	for (auto i = 0; i <4; i++)
+	{
+		to.push_back(b[i]);
+	}
+}
+
+uint32_t converter8to32(std::vector<uint8_t> data, uint32_t& position)
+{
+	uint8_t a[4];
+	for (size_t i = 0; i < 4; i++)
+	{
+		a[i] = data[position + i];
+	}
+	uint32_t info = *((uint32_t*)a);
+	position += 4;
+	return info;
 }

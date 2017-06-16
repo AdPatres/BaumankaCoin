@@ -198,43 +198,27 @@ server::m_handle_version(connection::pointer peer_ptr,
   assert(msg.first == "getblocks");
   auto gb = messages::create<messages::getblocks>(msg.second);
 
-  // 14 June
-  /*
-    if (gb.hash == SHA_256().process(Block().getBlockData()))
-      {
-        // share blockchain
-      }
-    else 
-      {
-        auto block_id = m_wallet.findByHash(gb.hash);
-        if (block_id > -1)
-          {
-            // inv with blocks after block_id
-          }
-        else if (block_id == -1)
-          {
-            // return my last block hash
-          }
-      }
-  */
-
-  // 15 June by Skalniy
-  auto block_id = m_wallet.findByHash(gb.hash);
   messages::inv inv;
-  if (block_id > -1)
+  if (gb.hash == SHA_256().process(Block().getBlockData()))
     {
-      if (gb.hash == SHA_256().process(Block().getBlockData()))
-        block_id = -1;
-
-      // TODO: func returns container with hashes after (block_id)
-      //  i.e blocks in range (block_id+1 .. last)
-      auto hashes = std::vector<messages::hash_t>();
+      auto hashes = m_wallet.getHashesAfter(-1);
       for (const auto& hash : hashes)
         inv.inventory.push_back(messages::inv_vect{
           messages::inv_vect::inv_type::msg_block, hash});
     }
-  else
-      inv.inventory.push_back(messages::inv_vect{
-        messages::inv_vect::inv_type::error, m_wallet.getLastBlockHash()});
+  else 
+    {
+      auto block_id = m_wallet.findByHash(gb.hash);
+      if (block_id > -1)
+        {
+          auto hashes = m_wallet.getHashesAfter(block_id);
+          for (const auto& hash : hashes)
+            inv.inventory.push_back(messages::inv_vect{
+              messages::inv_vect::inv_type::msg_block, hash});
+        }
+      else
+          inv.inventory.push_back(messages::inv_vect{
+            messages::inv_vect::inv_type::error, m_wallet.getLastBlockHash()});
+    }
   peer_ptr->send(inv);
-} // version msg
+}
