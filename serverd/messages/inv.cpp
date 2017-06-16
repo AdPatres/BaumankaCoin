@@ -1,5 +1,24 @@
 #include "inv.hpp"
 
+messages::hash_t
+messages::hash_from_32(const uint32_t value)
+{
+  messages::hash_t res = messages::hash_t(32, 0);
+  size_t i = 0;
+  for (const auto& byte : itobl(value))
+    res[i] = byte;
+  return std::move(res);
+}
+
+uint32_t
+messages::hash_to_32(const messages::hash_t& hash)
+{
+  uint32_t value = 0;
+  for (size_t i = 0; i < sizeof(value); ++i, value <<= 8)
+    value = hash[i];
+  return value;
+}
+
 using  namespace messages;
 
 payload_t& 
@@ -41,7 +60,7 @@ operator>>(std::istream& is, inv& obj)
 {
   uint32_t size;
   is.read(reinterpret_cast<char*>(&size), sizeof(size));
-  obj.inventory = std::vector<inv_vect>(32);
+  obj.inventory = std::vector<inv_vect>(size);
   for (size_t i = 0; i < obj.inventory.size(); ++i)
     {
       inv_vect elem;
@@ -75,3 +94,4 @@ operator>>(std::istream& is, getdata& obj)
     }
   return is;
 }
+

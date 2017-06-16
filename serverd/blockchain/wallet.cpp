@@ -121,7 +121,7 @@ Wallet::~Wallet()
 secure_vector<byte>
 Wallet::getLastBlockHash() // TODO: mutex
 {
-	return chain.blockChain.size() != 0 
+	return !chain.blockChain.empty()
 		? SHA_256().process(chain.blockChain.back().getBlockData()) 
 		: SHA_256().process(Block().getBlockData());
 } 
@@ -147,3 +147,7 @@ Wallet::getHashesAfter(uint64_t idx) const
 		res[j] = SHA_256().process(chain.blockChain[i].getBlockData());
 	return std::move(res);
 }
+
+uint32_t
+Wallet::getBlockchainSize() const
+{	return chain.blockChain.size(); }

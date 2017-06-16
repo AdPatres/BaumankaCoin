@@ -18,6 +18,12 @@ namespace messages
     hash_t    hash;
   };
 
+  hash_t
+  hash_from_32(const uint32_t value);
+
+  uint32_t
+  hash_to_32(const hash_t& hash);
+
   struct inv
   {
     std::vector<inv_vect> inventory;

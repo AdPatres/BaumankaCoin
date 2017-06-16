@@ -28,6 +28,7 @@ public:
 	int64_t findByHash(secure_vector<byte>);
 	std::vector<secure_vector<byte>> getHashesAfter(uint64_t) const;
 	~Wallet();
+	uint32_t getBlockchainSize() const;
 private:
 	void readInputs(std::istream& is, std::ostream& os);
 	void readTails(std::istream& is, std::ostream& os);

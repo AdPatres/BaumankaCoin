@@ -7,6 +7,7 @@
 
 #include <boost/asio/streambuf.hpp>
 #include <botan/botan.h>
+#include <botan/hex.h>
 
 namespace messages
 {
