@@ -1,5 +1,7 @@
 #include "blockchain.h"
 
+#include <iostream>
+
 
 Blockchain::Blockchain()
 {
@@ -47,19 +49,20 @@ bool Blockchain::validateBlock(Block& block)
 		return false;
 	if (block.currentNumber != blockChain.size())
 		return false;
-	if (block.currentNumber == 0 && block.prevBlock.size() != 0)
-	    return false;
-	if (block.currentNumber != 0 && block.prevBlock != SHA_256().process(blockChain[blockChain.size() - 1].getBlockData()))
+	std::cerr << "validate ok" << std::endl;
+	if (block.currentNumber != 0 
+		&& block.prevBlock != SHA_256().process(blockChain.back().getBlockData()))
 		return false;
 	if (!validateMerkleRoot(block))
 		return false;
+	std::cerr << "validate ok" << std::endl;
 	secure_vector<byte> hash = SHA_256().process(block.getBlockData());
 	bool validated = true;
-	for (auto i = 0; i < bits; i++)
-	{
-		if (hash[i] != 0)
-			validated = false;
-	}
+	// for (auto i = 0; i < bits; i++)
+	// {
+	// 	if (hash[i] != 0)
+	// 		validated = false;
+	// }
 	if (block.txs.size() > 0)
 	{
 		validated = validateFirstTxn(block.txs[0]);
@@ -98,7 +101,7 @@ void Blockchain::clearAvailibleTxes()
 }
 bool Blockchain::validateFirstTxn(const Transaction& txn)
 {
-	bool validated = txn.inputs.size() == 0 && txn.pubKey.size()==0 && txn.signature.size()==0 && txn.tails.size()==1;
+	bool validated = txn.inputs.size() == 0 && txn.tails.size()==1;
 	if (validated)
 	{
 		if (txn.tails[0].getInfo().first == 100)//HARDCODED
@@ -225,4 +228,30 @@ bool Blockchain::validateMerkleRoot(const Block& block)
 }
 Blockchain::~Blockchain()
 {
+}
+
+void 
+Blockchain::customize(size_t numberOfBlocks, secure_vector<byte> address)
+{
+    for (size_t i = 0; i < numberOfBlocks; i++)
+    {
+        Block block;
+        std::cerr << "add 1st tx " << block.addFirstTxe(address) << std::endl;
+        if (blockChain.size() == 0)
+        {
+            std::cerr << "merkle " << block.setMerkleRoot() << std::endl;
+            // block.calculate();
+            std::cerr << std::to_string(i) << ' ' << addBlock(block) << std::endl;
+        }
+        else
+        {
+            block.setPrevBlock(blockChain.back().getBlockData());
+            block.setNumber(blockChain.size());
+            block.setMerkleRoot();
+            // block.calculate();
+            std::cerr << std::to_string(i) << ' ' << addBlock(block) << std::endl;
+
+        }
+    }
+    return;
 }

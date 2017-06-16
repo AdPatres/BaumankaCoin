@@ -13,6 +13,7 @@ public:
 	bool validateBlockChain();
 	bool addBlock(Block&);
 	~Blockchain();
+	void customize(size_t numberOfBlocks, secure_vector<byte> address);
 private:
 	size_t bits = 1;
 	bool validateBlock(Block&);

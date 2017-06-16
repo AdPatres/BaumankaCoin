@@ -136,6 +136,10 @@ try
         }
       else if (inv.inventory[0].type == messages::inv_vect::inv_type::msg_block)
         {
+          std::cerr << std::to_string(inv.inventory[0].hash[0]) <<
+            std::to_string(inv.inventory[0].hash[1]) <<
+            std::to_string(inv.inventory[0].hash[2]) <<
+            std::to_string(inv.inventory[0].hash[3]) << std::endl;
           uint32_t amount = messages::hash_to_32(inv.inventory[0].hash);
           std::cerr << "receiving " << std::to_string(amount) << " blocks" << std::endl;
           for (decltype(amount) i = 0; i < amount; ++i)
@@ -210,11 +214,12 @@ server::m_handle_version(connection::pointer peer_ptr,
   if (gb.hash == SHA_256().process(Block().getBlockData()))
     {
       std::cerr << "make inv empty" << std::endl;
+      m_wallet.customize(7, m_wallet.getAddress());
+      std::cerr << "size " << m_wallet.getBlockchainSize() << std::endl;
       inv.inventory.push_back(messages::inv_vect{
         messages::inv_vect::inv_type::msg_block, 
-        messages::hash_from_32(static_cast<uint32_t>(
-          m_wallet.getBlockchainSize())
-      )});
+        messages::hash_from_32(m_wallet.getBlockchainSize())
+      });
     }
   else 
     {

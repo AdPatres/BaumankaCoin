@@ -24,6 +24,7 @@ public:
 	~Block();
 	std::vector<uint8_t> getBroadcastData();
 	bool scanBroadcastedData(std::vector<uint8_t>, uint32_t&);
+	void setNumber(size_t num) { currentNumber = num; }
 protected:
 	void setHash(std::vector<byte> from, uint32_t& position,
 		secure_vector<uint8_t>& to);

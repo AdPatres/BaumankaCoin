@@ -61,8 +61,9 @@ void Block::calculate()//should be modified to check if last block changed
 		{
 			if (hash[i] != 0)
 				break;
+			finished = true;
 		}
-		finished = true;
+		
 	}
 }
 

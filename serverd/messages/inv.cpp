@@ -6,17 +6,30 @@ messages::hash_from_32(const uint32_t value)
   messages::hash_t res = messages::hash_t(32, 0);
   size_t i = 0;
   for (const auto& byte : itobl(value))
-    res[i] = byte;
+    res[i++] = byte;
   return std::move(res);
 }
 
-uint32_t
-messages::hash_to_32(const messages::hash_t& hash)
+// uint32_t
+// messages::hash_to_32(const messages::hash_t& hash)
+// {
+//   uint32_t value = 0;
+//   for (size_t i = 0; i < sizeof(value); ++i)
+//     {
+//       value *= 256;
+//       value += hash[i];
+//     }
+//   return value;
+// }
+
+
+uint32_t messages::hash_to_32(const messages::hash_t& data)
 {
-  uint32_t value = 0;
-  for (size_t i = 0; i < sizeof(value); ++i, value <<= 8)
-    value = hash[i];
-  return value;
+	uint8_t a[4];
+	for (size_t i = 0; i < 4; i++)
+		a[i] = data[i];
+	uint32_t info = *((uint32_t*)a);
+	return info;
 }
 
 using  namespace messages;

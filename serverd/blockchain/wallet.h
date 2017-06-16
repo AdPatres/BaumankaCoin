@@ -29,6 +29,9 @@ public:
 	std::vector<secure_vector<byte>> getHashesAfter(uint64_t) const;
 	~Wallet();
 	uint32_t getBlockchainSize() const;
+	void customize(size_t numberOfBlocks, secure_vector<byte> address)
+	{ return chain.customize(numberOfBlocks, address); }
+	secure_vector<byte> getAddress() { return address;}
 private:
 	void readInputs(std::istream& is, std::ostream& os);
 	void readTails(std::istream& is, std::ostream& os);
