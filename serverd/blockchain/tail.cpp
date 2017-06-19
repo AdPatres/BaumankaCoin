@@ -29,9 +29,14 @@ bool Tail::setAddress(secure_vector<byte> destination)
 
 void converter(size_t from, std::vector<uint8_t>& to)
 {
-	for (auto i = 3; i >= 0; i--)
+	uint8_t b[4];
+	b[0] = (uint8_t)from;
+	b[1] = (uint8_t)(from >>= 8);
+	b[2] = (uint8_t)(from >>= 8);
+	b[3] = (uint8_t)(from >>= 8);
+	for (auto i = 0; i <4; i++)
 	{
-		to.push_back((uint8_t)from >> 8 * i);
+		to.push_back(b[i]);
 	}
 }
 std::vector<uint8_t> Tail::convertTo8()

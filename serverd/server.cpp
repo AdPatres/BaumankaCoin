@@ -87,7 +87,8 @@ void
 server::connect(const tcp::endpoint& endp,
   server::ConnectHandler cb)
 {
-  std::cerr << "connecting " << endp.address().to_v4().to_string() << ':' << std::to_string(endp.port()) << std::endl;
+  // std::cerr << "connecting " << endp.address().to_v4().to_string() 
+  //   << ':' << std::to_string(endp.port()) << std::endl;
   connection::pointer peer_ptr = connection::create(m_ios);
   peer_ptr->socket().async_connect(endp, boost::bind(cb,
     boost::asio::placeholders::error, peer_ptr));
@@ -147,7 +148,8 @@ try
               uint32_t position = 0;
               block.scanBroadcastedData(block_msg.data, position);
               block.showInfo();
-              std::cerr << "added " << m_wallet.addBlock(block) << ' '  <<m_wallet.getBlockchainSize() << std::endl;
+              // std::cerr << "added " << m_wallet.addBlock(block) 
+              //   << ' '  <<m_wallet.getBlockchainSize() << std::endl;
             }
         }
     } 
@@ -216,9 +218,9 @@ server::m_handle_version(connection::pointer peer_ptr,
   std::vector<messages::block_message> block_pool;
   if (gb.hash == SHA_256().process(Block().getBlockData()))
     {
-      std::cerr << "make inv empty" << std::endl;
+      // std::cerr << "make inv empty" << std::endl;
       m_wallet.customize(7, m_wallet.getAddress());
-      std::cerr << "size " << m_wallet.getBlockchainSize() << std::endl;
+      // std::cerr << "size " << m_wallet.getBlockchainSize() << std::endl;
       inv.inventory.push_back(messages::inv_vect{
         messages::inv_vect::inv_type::msg_block, 
         messages::hash_from_32(m_wallet.getBlockchainSize())
@@ -231,9 +233,10 @@ server::m_handle_version(connection::pointer peer_ptr,
     }
   else 
     {
-      std::cerr << "make inv from hash" << std::endl;
+      // std::cerr << "make inv from hash" << std::endl;
       auto block_id = m_wallet.findByHash(gb.hash);
-      std::cerr << "size " << m_wallet.getBlockchainSize()- block_id + 1 << std::endl;
+      // std::cerr << "size " << m_wallet.getBlockchainSize()- block_id + 1 
+      //   << std::endl;
       if (block_id > -1)
         inv.inventory.push_back(messages::inv_vect{
           messages::inv_vect::inv_type::msg_block, 
