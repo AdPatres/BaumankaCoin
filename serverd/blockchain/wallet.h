@@ -13,6 +13,7 @@
 #include "blockchain.h"
 #include <iostream>
 #include <vector>
+#include "tx_cmd/receiver.h"
 
 using namespace Botan;
 
@@ -44,7 +45,8 @@ private:
 	ECDSA_PrivateKey thePrivateKey = ECDSA_PrivateKey(aga, faf);
 	secure_vector<byte> address;
 	size_t sum;
-	Transaction current;
+	Transaction current; // deprecated
+	Receiver receiver;
 	Blockchain chain;
 	std::vector<AddedOutput> availibleForAddress;
 	
