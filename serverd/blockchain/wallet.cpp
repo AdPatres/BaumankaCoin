@@ -80,37 +80,23 @@ void Wallet::setCurrentSum()
 	}
 }
 Wallet::Wallet()
-// :thePrivateKey(AutoSeeded_RNG(), EC_Group("secp256k1"))
 {
 	AutoSeeded_RNG rng;
-	encPrivateKey = PKCS8::BER_encode(thePrivateKey);// rng, "default"/* const std::string &password, const std::string &pbe_algo = ""*/);
+	encPrivateKey = PKCS8::BER_encode(thePrivateKey);
 	publicKey = thePrivateKey.subject_public_key();
 	address = SHA_256().process(publicKey);
 	setAvailibleForAdress();
 	setCurrentSum();
-	current = Transaction(publicKey);
+	current = Transaction(publicKey); // deprecated
+	receiver.Initialize(publicKey);
 
-	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	//Public_Key* thePublicKey = X509::load_key(publicKey);
-	//std::string text("This is a tasty burger!");
-	//std::vector<uint8_t> data(text.data(), text.data() + text.length());
-	// sign data
-	//Botan::PK_Signer signer(thePrivateKey, rng, "EMSA1(SHA-256)");
-	//signer.update(data);
-	//std::vector<uint8_t> signature = signer.signature(rng);
-	//std::cout << "Signature:" << std::endl << Botan::hex_encode(signature);
-	// verify signature
-	//Botan::PK_Verifier verifier(*thePublicKey, "EMSA1(SHA-256)");
-	//verifier.update(data);
-	//std::cout << std::endl << "is " << (verifier.check_signature(signature) ? "valid" : "invalid");
-	//return 0;
 }
 
 Wallet::Wallet(secure_vector<byte> priv, std::vector<byte> pub) : encPrivateKey(priv), publicKey(pub), thePrivateKey(AlgorithmIdentifier(), encPrivateKey)//add
 {
 	address = SHA_256().process(publicKey);
-	current = Transaction(publicKey);
+	current = Transaction(publicKey); // deprecated
+	receiver.Initialize(publicKey);
 }
 
 

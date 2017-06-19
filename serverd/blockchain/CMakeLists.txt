@@ -12,7 +12,9 @@ add_library (transaction transaction.cpp transaction.h)
 add_library (wallet wallet.cpp wallet.h)
 add_library (input Input.cpp Input.h)
 
+add_subdirectory (tx_cmd)
+
 target_link_libraries (transaction output input tail)
 target_link_libraries (block transaction)
 target_link_libraries (blockchain block)
-target_link_libraries (wallet blockchain)
+target_link_libraries (wallet blockchain receiver)

@@ -46,6 +46,11 @@ public:
 		for (auto i : tails)
 			std::cerr << i;
 	}
+
+	bool removeSign()
+	{
+		signature = std::vector<byte>(64, 0);
+	}
 protected:
 	std::vector<Input> inputs;
 	std::vector<Tail> tails;

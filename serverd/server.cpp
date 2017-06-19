@@ -147,7 +147,7 @@ try
               Block block;
               uint32_t position = 0;
               block.scanBroadcastedData(block_msg.data, position);
-              block.showInfo();
+              // block.showInfo();
               // std::cerr << "added " << m_wallet.addBlock(block) 
               //   << ' '  <<m_wallet.getBlockchainSize() << std::endl;
             }

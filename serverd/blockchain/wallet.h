@@ -11,6 +11,7 @@
 #include <botan/alg_id.h>//to intialize
 #include <botan/hash.h>//with sha2 for hashing
 #include "blockchain.h"
+#include "tx_cmd/receiver.h"
 #include <iostream>
 #include <vector>
 
@@ -23,7 +24,7 @@ public:
 	Wallet(secure_vector<byte>, std::vector<byte>);
 	void setAvailibleForAdress();
 	void setCurrentSum();
-	void createTxe(std::istream& is, std::ostream& os);
+	void createTxe(std::istream& is, std::ostream& os); // to re-write
 	secure_vector<byte> getLastBlockHash();
 	int64_t findByHash(secure_vector<byte>);
 	std::vector<secure_vector<byte>> getHashesAfter(uint64_t) const;
@@ -44,7 +45,8 @@ private:
 	ECDSA_PrivateKey thePrivateKey = ECDSA_PrivateKey(aga, faf);
 	secure_vector<byte> address;
 	size_t sum;
-	Transaction current;
+	Transaction current; // deprecated
+	Receiver receiver;
 	Blockchain chain;
 	std::vector<AddedOutput> availibleForAddress;
 	
