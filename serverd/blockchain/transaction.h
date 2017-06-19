@@ -50,10 +50,7 @@ public:
 	bool removeSign()
 	{
 		signature = std::vector<byte>(64, 0);
-<<<<<<< HEAD
 		return true;
-=======
->>>>>>> 1626c2daaaf210cdeed947ef9e8493817f610f1d
 	}
 protected:
 	std::vector<Input> inputs;
