@@ -1,9 +1,9 @@
-#include "block.hpp"
+#include "tx.hpp"
 
 using namespace messages;
 
 payload_t& 
-operator<<(payload_t& payload, const block_message& obj)
+operator<<(payload_t& payload, const tx& obj)
 {
   for (const auto& byte : itobl(obj.data.size()))
     payload.push_back(byte);
@@ -13,7 +13,7 @@ operator<<(payload_t& payload, const block_message& obj)
 }
 
 std::istream& 
-operator>>(std::istream& is, block_message& obj)
+operator>>(std::istream& is, tx& obj)
 {
   uint32_t size;
   is.read(reinterpret_cast<char*>(&size), sizeof(size));

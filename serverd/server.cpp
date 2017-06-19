@@ -3,6 +3,7 @@
 #include "messages/getblocks.hpp"
 #include "messages/version.hpp"
 #include "messages/block.hpp"
+#include "messages/tx.hpp"
 #include <botan/hex.h>
 
 #include <boost/bind.hpp>
@@ -87,8 +88,6 @@ void
 server::connect(const tcp::endpoint& endp,
   server::ConnectHandler cb)
 {
-  // std::cerr << "connecting " << endp.address().to_v4().to_string() 
-  //   << ':' << std::to_string(endp.port()) << std::endl;
   connection::pointer peer_ptr = connection::create(m_ios);
   peer_ptr->socket().async_connect(endp, boost::bind(cb,
     boost::asio::placeholders::error, peer_ptr));
@@ -134,7 +133,7 @@ try
     {
       if (inv.inventory[0].type == messages::inv_vect::inv_type::error)
         {
-          // error
+          // TODO: error handle
         }
       else if (inv.inventory[0].type == messages::inv_vect::inv_type::msg_block)
         {
@@ -147,9 +146,7 @@ try
               Block block;
               uint32_t position = 0;
               block.scanBroadcastedData(block_msg.data, position);
-              block.showInfo();
-              // std::cerr << "added " << m_wallet.addBlock(block) 
-              //   << ' '  <<m_wallet.getBlockchainSize() << std::endl;
+              m_wallet.addBlock(block);
             }
         }
     } 
@@ -169,24 +166,34 @@ server::m_make_addr()
 void
 server::m_handle_inv(connection::pointer peer_ptr, const messages::inv& inv)
 {
-  messages::getdata getdata;
-  for (const auto& iv : inv.inventory)
-    if (iv.type != messages::inv_vect::inv_type::error)
-      getdata.inventory.push_back(iv);
-  peer_ptr->send(getdata);
-  
-  for (size_t i = 0; i < getdata.inventory.size(); ++i)
+  for (const auto& row : inv.inventory)
     {
-      auto msg = peer_ptr->receive();
-      if (msg.first == "block")
+      uint32_t amount = messages::hash_to_32(row.hash);
+      if (row.type == messages::inv_vect::inv_type::msg_block)
         {
-          // TODO: block message
-          // auto block = messages::create<messages::block>(msg.second);
-          // TODO: check block  & make smth
+          for (uint32_t i = 0; i < amount; ++i)
+            {
+              auto msg = peer_ptr->receive();
+              assert(msg.first == "block");
+              auto block_msg = messages::create<messages::block_message>(msg.second);
+              Block block;
+              uint32_t position = 0;
+              block.scanBroadcastedData(block_msg.data, position);
+              m_wallet.addBlock(block);
+            }
         }
-      else if (msg.first == "tx")
+      else if (row.type == messages::inv_vect::inv_type::msg_tx)
         {
-          // TODO: same for txes
+          for (uint32_t i = 0; i < amount; ++i)
+            {
+              auto msg = peer_ptr->receive();
+              assert(msg.first == "block");
+              auto tx_msg = messages::create<messages::tx>(msg.second);
+              Transaction tx;
+              uint32_t position = 0;
+              tx.scanBroadcastedData(tx_msg.data, position);
+              m_wallet.addTx(tx);
+            }
         }
     }
 }
@@ -218,9 +225,7 @@ server::m_handle_version(connection::pointer peer_ptr,
   std::vector<messages::block_message> block_pool;
   if (gb.hash == SHA_256().process(Block().getBlockData()))
     {
-      // std::cerr << "make inv empty" << std::endl;
       m_wallet.customize(7, m_wallet.getAddress());
-      // std::cerr << "size " << m_wallet.getBlockchainSize() << std::endl;
       inv.inventory.push_back(messages::inv_vect{
         messages::inv_vect::inv_type::msg_block, 
         messages::hash_from_32(m_wallet.getBlockchainSize())
@@ -233,10 +238,7 @@ server::m_handle_version(connection::pointer peer_ptr,
     }
   else 
     {
-      // std::cerr << "make inv from hash" << std::endl;
       auto block_id = m_wallet.findByHash(gb.hash);
-      // std::cerr << "size " << m_wallet.getBlockchainSize()- block_id + 1 
-      //   << std::endl;
       if (block_id > -1)
         inv.inventory.push_back(messages::inv_vect{
           messages::inv_vect::inv_type::msg_block, 

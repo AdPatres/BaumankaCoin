@@ -35,6 +35,7 @@ public:
 	{ return chain.customize(numberOfBlocks, address); }
 	secure_vector<byte> getAddress() { return address;}
 	bool addBlock(Block& b){ return chain.addBlock(b); }
+	void addTx(const Transaction& tx) { Block::nonValidated.push_back(tx); }
 private:
 	void readInputs(std::istream& is, std::ostream& os);
 	void readTails(std::istream& is, std::ostream& os);
