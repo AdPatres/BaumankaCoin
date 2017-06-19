@@ -82,19 +82,33 @@ void Wallet::setCurrentSum()
 Wallet::Wallet()
 {
 	AutoSeeded_RNG rng;
+<<<<<<< HEAD
 	encPrivateKey = PKCS8::BER_encode(thePrivateKey);// rng, "default"
+=======
+	encPrivateKey = PKCS8::BER_encode(thePrivateKey);
+>>>>>>> 1626c2daaaf210cdeed947ef9e8493817f610f1d
 	publicKey = thePrivateKey.subject_public_key();
 	address = SHA_256().process(publicKey);
 	setAvailibleForAdress();
 	setCurrentSum();
+<<<<<<< HEAD
 	current = Transaction(publicKey);
 	receiver.Initialize(publicKey);
+=======
+	current = Transaction(publicKey); // deprecated
+	receiver.Initialize(publicKey);
+
+>>>>>>> 1626c2daaaf210cdeed947ef9e8493817f610f1d
 }
 
 Wallet::Wallet(secure_vector<byte> priv, std::vector<byte> pub) : encPrivateKey(priv), publicKey(pub), thePrivateKey(AlgorithmIdentifier(), encPrivateKey)//add
 {
 	address = SHA_256().process(publicKey);
+<<<<<<< HEAD
 	current = Transaction(publicKey);
+=======
+	current = Transaction(publicKey); // deprecated
+>>>>>>> 1626c2daaaf210cdeed947ef9e8493817f610f1d
 	receiver.Initialize(publicKey);
 }
 

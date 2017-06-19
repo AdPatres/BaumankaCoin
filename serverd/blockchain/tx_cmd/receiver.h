@@ -6,9 +6,17 @@
 #include "signer.h"
 #include "cleaner.h"
 
+<<<<<<< HEAD
 class Receiver
 {
 	std::vector<Command*> DoneCommands;
+=======
+using namespace std;
+
+class Receiver
+{
+	vector<Command*> DoneCommands;
+>>>>>>> 1626c2daaaf210cdeed947ef9e8493817f610f1d
 	std::vector<byte> keyPublic;
 	Command* command;
 public:
@@ -57,7 +65,11 @@ public:
 	{
 		if (DoneCommands.size() == 0)
 		{
+<<<<<<< HEAD
 			std::cout << "There is nothing to undo!" << std::endl;
+=======
+			cout << "There is nothing to undo!" << endl;
+>>>>>>> 1626c2daaaf210cdeed947ef9e8493817f610f1d
 		}
 		else
 		{
