@@ -187,7 +187,7 @@ server::m_handle_inv(connection::pointer peer_ptr, const messages::inv& inv)
           for (uint32_t i = 0; i < amount; ++i)
             {
               auto msg = peer_ptr->receive();
-              assert(msg.first == "block");
+              assert(msg.first == "tx");
               auto tx_msg = messages::create<messages::tx>(msg.second);
               Transaction tx;
               uint32_t position = 0;
@@ -231,10 +231,7 @@ server::m_handle_version(connection::pointer peer_ptr,
         messages::hash_from_32(m_wallet.getBlockchainSize())
       });
       for (const auto& block : m_wallet.getBlocksAfter(-1))
-      {
-        block_pool.push_back(messages::block_message{ block.getBroadcastData() });
-        block.showInfo();
-      }
+        block_pool.push_back(messages::block_message{block.getBroadcastData()});
     }
   else 
     {

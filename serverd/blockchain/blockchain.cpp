@@ -1,10 +1,19 @@
 #include "blockchain.h"
 
 #include <iostream>
-
+std::shared_ptr<Blockchain> Blockchain::_self;//CHANGED
 
 Blockchain::Blockchain()
 {
+}
+std::shared_ptr<Blockchain> Blockchain::instance()//CHANGED
+{
+	if (!_self)
+	{
+		Blockchain* ptr = new Blockchain;
+		_self = std::shared_ptr<Blockchain>(ptr);
+	}
+	return _self;
 }
 bool Blockchain::addBlock(Block& block)
 {
@@ -50,7 +59,7 @@ bool Blockchain::validateBlock(Block& block)
 	if (block.currentNumber != blockChain.size())
 		return false;
 	std::cerr << "validate ok" << std::endl;
-	if (block.currentNumber != 0 
+	if (block.currentNumber != 0
 		&& block.prevBlock != SHA_256().process(blockChain.back().getBlockData()))
 		return false;
 	std::cerr << "validate ok" << std::endl;
@@ -73,7 +82,7 @@ bool Blockchain::validateBlock(Block& block)
 	for (auto i = 1; i < block.txs.size(); i++)
 	{
 		std::vector<std::pair<Output, size_t>> toRestore;
-		validated =  validateTxn(block.txs[i], toRestore);
+		validated = validateTxn(block.txs[i], toRestore);
 		if (!validated)
 			break;
 	}
@@ -82,12 +91,12 @@ bool Blockchain::validateBlock(Block& block)
 		setAvailibleTxes(block);
 		clearAvailibleTxes();
 	}
-		
+
 	return validated;
 }
 void Blockchain::clearAvailibleTxes()
 {
-	for (auto i =0;i<Transaction::availibleTxes.size();i++)
+	for (auto i = 0; i<Transaction::availibleTxes.size(); i++)
 	{
 		bool toRemove = true;
 		for (auto j : Transaction::availibleTxes[i].usedTails)
@@ -102,7 +111,7 @@ void Blockchain::clearAvailibleTxes()
 }
 bool Blockchain::validateFirstTxn(const Transaction& txn)
 {
-	bool validated = txn.inputs.size() == 0 && txn.tails.size()==1;
+	bool validated = txn.inputs.size() == 0 && txn.tails.size() == 1;
 	if (validated)
 	{
 		if (txn.tails[0].getInfo().first == 100)//HARDCODED
@@ -231,28 +240,28 @@ Blockchain::~Blockchain()
 {
 }
 
-void 
+void
 Blockchain::customize(size_t numberOfBlocks, secure_vector<byte> address)
 {
-    for (size_t i = 0; i < numberOfBlocks; i++)
-    {
-        Block block;
-        std::cerr << "add 1st tx " << block.addFirstTxe(address) << std::endl;
-        if (blockChain.size() == 0)
-        {
-            std::cerr << "merkle " << block.setMerkleRoot() << std::endl;
-            // block.calculate();
-            std::cerr << std::to_string(i) << ' ' << addBlock(block) << std::endl;
-        }
-        else
-        {
-            block.setPrevBlock(blockChain.back().getBlockData());
-            block.setNumber(blockChain.size());
-            block.setMerkleRoot();
-            // block.calculate();
-            std::cerr << std::to_string(i) << ' ' << addBlock(block) << std::endl;
+	for (size_t i = 0; i < numberOfBlocks; i++)
+	{
+		Block block;
+		std::cerr << "add 1st tx " << block.addFirstTxe(address) << std::endl;
+		if (blockChain.size() == 0)
+		{
+			std::cerr << "merkle " << block.setMerkleRoot() << std::endl;
+			// block.calculate();
+			std::cerr << std::to_string(i) << ' ' << addBlock(block) << std::endl;
+		}
+		else
+		{
+			block.setPrevBlock(blockChain.back().getBlockData());
+			block.setNumber(blockChain.size());
+			block.setMerkleRoot();
+			// block.calculate();
+			std::cerr << std::to_string(i) << ' ' << addBlock(block) << std::endl;
 
-        }
-    }
-    return;
+		}
+	}
+	return;
 }

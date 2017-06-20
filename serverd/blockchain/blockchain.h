@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include "block.h"
-
+#include <memory>
 
 class Blockchain
 {
@@ -15,11 +15,13 @@ public:
 	~Blockchain();
 	void customize(size_t numberOfBlocks, secure_vector<byte> address);
 private:
+	static std::shared_ptr<Blockchain> _self;
+	static std::shared_ptr<Blockchain> instance();
 	size_t bits = 1;
 	bool validateBlock(Block&);
 	bool validateMerkleRoot(const Block&);
 	bool validateTxn(const Transaction&, std::vector<std::pair<Output, size_t>>);
-	bool validateFirstTxn(const Transaction& );
+	bool validateFirstTxn(const Transaction&);
 	size_t validateInputs(const Transaction&, std::vector<std::pair<Output, size_t>>);//returns amount of money taken from inputs
 	bool validateSignature(const Transaction&);
 	bool validateTails(const Transaction&, size_t);
@@ -29,4 +31,3 @@ private:
 	std::vector<Block> blockChain;
 	std::vector<Block> nonValidatedBlockChain;
 };
-

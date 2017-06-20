@@ -13,7 +13,9 @@
 #include "blockchain.h"
 #include <iostream>
 #include <vector>
-#include "tx_cmd/receiver.h"
+#include "./tx_cmd/receiver.h"
+#include <memory>
+//#include "tx_cmd/receiver.h"
 
 using namespace Botan;
 
@@ -31,10 +33,12 @@ public:
 	std::vector<Block> getBlocksAfter(uint64_t) const;
 	~Wallet();
 	uint32_t getBlockchainSize() const;
-	void customize(size_t numberOfBlocks, secure_vector<byte> address)
-	{ return chain.customize(numberOfBlocks, address); }
-	secure_vector<byte> getAddress() { return address;}
-	bool addBlock(Block& b){ return chain.addBlock(b); }
+	void customize(size_t numberOfBlocks, secure_vector<byte> address)//CHANGED
+	{
+		return chain->customize(numberOfBlocks, address);
+	}
+	secure_vector<byte> getAddress() { return address; }
+	bool addBlock(Block& b) { return chain->addBlock(b); }//CHANGED
 	void addTx(const Transaction& tx) { Block::nonValidated.push_back(tx); }
 private:
 	void readInputs(std::istream& is, std::ostream& os);
@@ -48,10 +52,10 @@ private:
 	size_t sum;
 	Transaction current; // deprecated
 	Receiver receiver;
-	Blockchain chain;
+	std::shared_ptr<Blockchain> chain;//CHANGED
 	std::vector<AddedOutput> availibleForAddress;
-	
-	
+
+
 	//PKCS8* priv;
 	//X509* pub;
 };
