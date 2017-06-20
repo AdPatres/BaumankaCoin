@@ -45,6 +45,7 @@ void
 server::start()
 {
   this->accept();
+  m_miner.start();
   m_ios.run();
 }
 
@@ -53,6 +54,7 @@ server::stop()
 {
   m_acceptor.cancel();
   m_acceptor.close();
+  m_miner.stop();
   m_ios.stop();
 }
 

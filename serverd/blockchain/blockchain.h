@@ -14,9 +14,9 @@ public:
 	bool addBlock(Block&);
 	~Blockchain();
 	void customize(size_t numberOfBlocks, secure_vector<byte> address);
+	static std::shared_ptr<Blockchain> instance();
 private:
 	static std::shared_ptr<Blockchain> _self;
-	static std::shared_ptr<Blockchain> instance();
 	size_t bits = 1;
 	bool validateBlock(Block&);
 	bool validateMerkleRoot(const Block&);

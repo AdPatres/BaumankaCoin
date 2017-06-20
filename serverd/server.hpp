@@ -4,6 +4,7 @@
 #include "messages/inv.hpp"
 #include "messages/net_addr.hpp"
 #include "blockchain/wallet.h"
+#include "miner.hpp"
 
 #include <cstdint>      // uint16_t
 #include <forward_list>
@@ -62,6 +63,7 @@ namespace serverd
     std::forward_list<messages::net_addr> m_peers;
 
     Wallet                                m_wallet;
+    miner                                 m_miner;
   };
   extern std::unique_ptr<server> g_server_ptr;
 } // namespace serverd

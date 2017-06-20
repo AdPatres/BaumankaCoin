@@ -18,9 +18,10 @@ link_directories(/usr/local/lib/)
 add_library (server server.cpp server.hpp)
 add_library (fpid fpid.cpp fpid.hpp)
 add_library (connection connection.cpp connection.hpp)
+add_library (miner miner.cpp miner.hpp)
 
 add_subdirectory (messages)
 add_subdirectory (blockchain)
 
 add_executable (adpatresd main.cpp)
-target_link_libraries (adpatresd ${EXTRA_LIBS} pthread server fpid connection version getblocks inv wallet block_msg tx botan-2)
+target_link_libraries (adpatresd ${EXTRA_LIBS} pthread server fpid connection version getblocks inv wallet block_msg tx miner botan-2)
