@@ -53,18 +53,7 @@ bool Block::setPrevBlock(std::vector<uint8_t> data)
 }
 void Block::calculate()//should be modified to check if last block changed
 {
-	bool finished=false;
-	while (!finished)
-	{
-		secure_vector<byte> hash = SHA_256().process(getBlockData());
-		for (auto i = 0; i < bits; i++)
-		{
-			if (hash[i] != 0)
-				break;
-			finished = true;
-		}
-		
-	}
+	
 }
 
 std::vector<uint8_t> Block::getTxeData(size_t num) const

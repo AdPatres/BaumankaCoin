@@ -1,5 +1,5 @@
 #pragma once
-#include "transaction.h"
+#include "../transaction.h"
 #include <botan/botan.h>
 class Command
 {
@@ -14,6 +14,5 @@ public:
 	}
 
 	virtual ~Command(){}
-protected:
 	static Transaction txe;
 };

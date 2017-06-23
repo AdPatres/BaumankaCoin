@@ -1,6 +1,6 @@
 #pragma once
 
-#include "message.hpp"
+#include "./messages/message.hpp"
 
 #include <iostream>
 #include <memory> // shared_ptr

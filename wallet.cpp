@@ -6,6 +6,106 @@ std::vector<Transaction> Block::nonValidated;
 
 using namespace Botan;
 
+void Wallet::runMiner()
+{
+
+}
+void Wallet::welcome()
+{
+
+	std::cout << "choose variants" << std::endl; 
+	std::cout << "enter Wallet - print 1" <<std::endl;
+	std::cout << "create new Wallet - print 2" << std::endl;
+	char c = ' ';
+	std::cin >> c;
+	switch(c)
+	{
+		case('1'):
+		{
+			secure_vector<byte> priv;
+			std::vector<byte> pub;
+			for (size_t i = 0; i < 287; i++)
+			{
+				char info;
+				std::cin >> info;
+				priv.push_back(info);
+			}
+			for (size_t i = 0; i < 279; i++)
+			{
+				char info;
+				std::cin >> info;
+				pub.push_back(info);
+			}
+			*this = Wallet(priv, pub);
+			commandProg();
+			break;
+		}
+		case('2'):
+		{
+			commandProg();
+			break;
+		}
+		default:
+		{
+			std::cout << "you did smth wrong try again" << std::endl;
+			welcome();
+			break;
+		}
+
+	}
+}
+void Wallet::commandProg()
+{
+	std::cout << "Current Sum: " << sum << std::endl;
+	std::cout << "choose variants" << std::endl;
+	std::cout << "refresh Data - print 1" << std::endl;
+	std::cout << "create new Transaction - print 2" << std::endl;
+	if (minerState)
+	{
+		std::cout << "stop miner - print 3" << std::endl;
+	}
+	else
+	{
+		std::cout << "run miner - print 3" << std::endl;
+	}
+	char c = ' ';
+	std::cin >> c;
+	switch (c)
+	{
+		case('1'):
+		{
+			setAvailibleForAdress();
+			setCurrentSum();
+			commandProg();
+			break;
+		}
+		case('2'):
+		{
+			createTxe(std::cin,std::cout);
+			commandProg();
+			break;
+		}
+		case('3'):
+		{
+			runMiner();
+			commandProg();
+		}
+		default:
+		{
+			std::cout << "you did smth wrong try again" << std::endl;
+			welcome();
+			break;
+		}
+	}
+}
+Wallet& Wallet::operator = (const Wallet& v2)
+{
+	encPrivateKey = v2.encPrivateKey;
+	publicKey = v2.publicKey;
+    faf = v2.faf;
+	thePrivateKey =v2.thePrivateKey;
+	address = v2.address;
+}
 void Wallet::setAvailibleForAdress()//CHANGED
 {
 	availibleForAddress.clear();
@@ -30,7 +130,7 @@ void Wallet::readInputs(std::istream& is, std::ostream& os)//CHANGED
 		is >> txeNum;
 		os << "Enter tail num \n";
 		is >> tail;
-		current.addInput(Output(blockNum, txeNum), tail, chain->blockChain[blockNum].txs[txeNum].getTxeData());
+		receiver.addInput(Output(blockNum, txeNum), tail, chain->blockChain[blockNum].txs[txeNum].getTxeData());
 		os << "add more inputs? y-yes, else - no";
 		is >> answer;
 	}
@@ -52,14 +152,14 @@ void Wallet::readTails(std::istream& is, std::ostream& os)
 		size_t money = 0;
 		os << "Now enter money to send on that addr";
 		is >> money;
-		current.addTail(Tail(money, addr));
+		receiver.addTail(Tail(money, addr));
 		os << "add more tails? y-yes, else - no";
 		is >> answer;
 	}
 }
 void Wallet::createTxe(std::istream& is, std::ostream& os)//CHANGED
 {
-	current.clear();
+	receiver.clear();
 	os << "First add Inputs\n";
 	for (auto i : availibleForAddress)
 	{
@@ -69,7 +169,9 @@ void Wallet::createTxe(std::istream& is, std::ostream& os)//CHANGED
 	}
 	readInputs(is, os);
 	readTails(is, os);
-	current.sign(thePrivateKey);
+	receiver.sign(thePrivateKey);
+	auto tx =receiver.get();
+	//broadcast tx;
 }
 void Wallet::setCurrentSum()//CHANGED
 {
@@ -88,7 +190,6 @@ Wallet::Wallet()//CHANGED
 	address = SHA_256().process(publicKey);
 	setAvailibleForAdress();
 	setCurrentSum();
-	current = Transaction(publicKey);
 	receiver.Initialize(publicKey);
 	chain = Blockchain::instance();
 }
@@ -96,7 +197,6 @@ Wallet::Wallet()//CHANGED
 Wallet::Wallet(secure_vector<byte> priv, std::vector<byte> pub) : encPrivateKey(priv), publicKey(pub), thePrivateKey(AlgorithmIdentifier(), encPrivateKey)//add//CHANGED
 {
 	address = SHA_256().process(publicKey);
-	current = Transaction(publicKey); // deprecated
 	receiver.Initialize(publicKey);
 	chain = Blockchain::instance();
 }
@@ -104,25 +204,6 @@ Wallet::Wallet(secure_vector<byte> priv, std::vector<byte> pub) : encPrivateKey(
 
 Wallet::~Wallet()
 {
-}
-
-secure_vector<byte>
-Wallet::getLastBlockHash() // TODO: mutex //CHANGED
-{
-	return !chain->blockChain.empty()
-		? SHA_256().process(chain->blockChain.back().getBlockData())
-		: SHA_256().process(Block().getBlockData());
-}
-
-int64_t
-Wallet::findByHash(secure_vector<byte> hash)//CHANGED
-{
-	for (int64_t i = 0; i < chain->blockChain.size(); ++i)
-	{
-		if (SHA_256().process(chain->blockChain[i].getBlockData()) == hash)
-			return i;
-	}
-	return -1;
 }
 
 std::vector<secure_vector<byte>>
@@ -134,20 +215,4 @@ Wallet::getHashesAfter(uint64_t idx) const//CHANGED
 	for (size_t i = idx; i < chain->blockChain.size(); ++i, ++j)
 		res[j] = SHA_256().process(chain->blockChain[i].getBlockData());
 	return std::move(res);
-}
-
-std::vector<Block>
-Wallet::getBlocksAfter(uint64_t idx) const //CHANGED
-{
-	++idx;
-	std::vector<Block> res(chain->blockChain.size() - idx);
-	for (size_t i = idx, j = 0; i < chain->blockChain.size(); ++i, ++j)
-		res[j] = chain->blockChain[i];
-	return std::move(res);
-}
-
-uint32_t
-Wallet::getBlockchainSize() const //CHANGED
-{
-	return chain->blockChain.size();
 }

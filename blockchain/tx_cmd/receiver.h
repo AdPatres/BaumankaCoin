@@ -5,7 +5,6 @@
 #include "removeTail.h"
 #include "signer.h"
 #include "cleaner.h"
-
 class Receiver
 {
 	std::vector<Command*> DoneCommands;
@@ -66,5 +65,9 @@ public:
 			command->unExecute();
 			delete command;
 		}
+	}
+	Transaction get()
+	{
+		return Command::txe;
 	}
 };

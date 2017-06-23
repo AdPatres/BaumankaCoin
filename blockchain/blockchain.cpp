@@ -265,3 +265,36 @@ Blockchain::customize(size_t numberOfBlocks, secure_vector<byte> address)
 	}
 	return;
 }
+
+secure_vector<byte>
+Blockchain::getLastBlockHash() // TODO: mutex //CHANGED
+{
+	return !blockChain.empty()
+		? SHA_256().process(blockChain.back().getBlockData())
+		: SHA_256().process(Block().getBlockData());
+}
+
+uint32_t
+Blockchain::getBlockchainSize() const //CHANGED
+{ return blockChain.size(); }
+
+std::vector<Block>
+Blockchain::getBlocksAfter(uint64_t idx) const //CHANGED
+{
+	++idx;
+	std::vector<Block> res(blockChain.size() - idx);
+	for (size_t i = idx, j = 0; i < blockChain.size(); ++i, ++j)
+		res[j] = blockChain[i];
+	return std::move(res);
+}
+
+int64_t
+Blockchain::findByHash(secure_vector<byte> hash)//CHANGED
+{
+	for (int64_t i = 0; i < blockChain.size(); ++i)
+	{
+		if (SHA_256().process(blockChain[i].getBlockData()) == hash)
+			return i;
+	}
+	return -1;
+}

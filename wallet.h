@@ -10,12 +10,14 @@
 #include <botan/hex.h>//to std::out from hex
 #include <botan/alg_id.h>//to intialize
 #include <botan/hash.h>//with sha2 for hashing
-#include "blockchain.h"
+#include "../blockchain/blockchain.h"
 #include <iostream>
 #include <vector>
-#include "./tx_cmd/receiver.h"
+#include "../blockchain/tx_cmd/receiver.h"
 #include <memory>
-//#include "tx_cmd/receiver.h"
+
+#include "./network/server.hpp"
+#include "./miner.hpp"
 
 using namespace Botan;
 
@@ -24,22 +26,29 @@ class Wallet
 public:
 	Wallet();
 	Wallet(secure_vector<byte>, std::vector<byte>);
+	Wallet& operator=(const Wallet& );
 	void setAvailibleForAdress();
 	void setCurrentSum();
 	void createTxe(std::istream& is, std::ostream& os);
-	secure_vector<byte> getLastBlockHash();
-	int64_t findByHash(secure_vector<byte>);
 	std::vector<secure_vector<byte>> getHashesAfter(uint64_t) const;
-	std::vector<Block> getBlocksAfter(uint64_t) const;
+
 	~Wallet();
-	uint32_t getBlockchainSize() const;
 	void customize(size_t numberOfBlocks, secure_vector<byte> address)//CHANGED
 	{
 		return chain->customize(numberOfBlocks, address);
 	}
 	secure_vector<byte> getAddress() { return address; }
-	bool addBlock(Block& b) { return chain->addBlock(b); }//CHANGED
 	void addTx(const Transaction& tx) { Block::nonValidated.push_back(tx); }
+	void sizes()
+	{
+		std::cout << encPrivateKey.size() << std::endl;
+		std::cout << publicKey.size() << std::endl;
+	}
+	void runMiner();
+	void welcome();
+	void commandProg();
+
+
 private:
 	void readInputs(std::istream& is, std::ostream& os);
 	void readTails(std::istream& is, std::ostream& os);
@@ -50,12 +59,11 @@ private:
 	ECDSA_PrivateKey thePrivateKey = ECDSA_PrivateKey(aga, faf);
 	secure_vector<byte> address;
 	size_t sum;
-	Transaction current; // deprecated
+	bool minerState = false;
 	Receiver receiver;
 	std::shared_ptr<Blockchain> chain;//CHANGED
 	std::vector<AddedOutput> availibleForAddress;
 
-
-	//PKCS8* priv;
-	//X509* pub;
+	serverd::server	m_server;
+	serverd::miner 	m_miner;
 };

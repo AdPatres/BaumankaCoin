@@ -1,6 +1,6 @@
 #pragma once
 
-#include "wallet.h"
+#include "./blockchain/blockchain.h"
 
 #include <memory>
 #include <thread>
@@ -24,5 +24,7 @@ namespace serverd
 
     std::shared_ptr<Blockchain>   m_blockchain_ptr = Blockchain::instance();
     std::unique_ptr<std::thread>  m_mining_th;
+    secure_vector<byte>           m_local_address;
+    uint64_t                      m_bits = 1;
   };
 } // namespace serverd
