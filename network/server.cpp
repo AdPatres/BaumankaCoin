@@ -33,6 +33,7 @@ server::server()
   m_port = tree.get("port", 8333);
   auto local_endp = tcp::endpoint(tcp::v4(), m_port);
   m_acceptor.open(local_endp.protocol());
+  m_acceptor.set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
   m_acceptor.bind(local_endp);
   std::cout << "listening at port " << m_port << std::endl;
 
@@ -63,9 +64,9 @@ void
 server::stop()
 { 
   m_ios.stop();
+  m_acceptor.cancel();
   if (!m_acceptor.is_open())
     return;
-  m_acceptor.cancel();
   m_acceptor.close();
   if (m_acc_th_ptr.get())
     m_acc_th_ptr->join();
@@ -74,8 +75,9 @@ server::stop()
 void
 server::m_run()
 {
-  m_ios.run();
+  m_acceptor.listen();
   m_accept();
+  m_ios.run();
 }
 
 void
@@ -87,6 +89,7 @@ server::m_accept()
   m_acceptor.async_accept(new_conn_ptr->socket(), 
     boost::bind(&server::m_handle_accept, this, 
       boost::asio::placeholders::error, new_conn_ptr));
+  std::cerr << "accepted2" << std::endl;
 }
 
 void
@@ -97,6 +100,7 @@ try
   m_accept();
   if (ec) throw std::runtime_error(ec.message());
 
+  std::cerr << "accepted" << std::endl;
   auto msg = peer_ptr->receive();
   if (msg.first == "version")
     m_handle_version(peer_ptr, messages::create<messages::version>(msg.second));
@@ -150,7 +154,7 @@ server::m_handle_version(connection::pointer peer_ptr,
   std::vector<messages::block_message> block_pool;
   if (gb.hash == SHA_256().process(Block().getBlockData()))
     {
-      // m_blockchain_ptr->customize(7, m_blockchain_ptr->getAddress());
+      m_blockchain_ptr->customize(7, secure_vector<byte>(32, 0));
       inv.inventory.push_back(messages::inv_vect{
         messages::inv_vect::inv_type::msg_block, 
         messages::hash_from_32(m_blockchain_ptr->getBlockchainSize())
