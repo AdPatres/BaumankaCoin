@@ -47,7 +47,6 @@ public:
 	void welcome();
 	void commandProg();
 
-
 private:
 	void readInputs(std::istream& is, std::ostream& os);
 	void readTails(std::istream& is, std::ostream& os);
@@ -57,8 +56,7 @@ private:
 	EC_Group faf = EC_Group("secp256k1");
 	ECDSA_PrivateKey thePrivateKey = ECDSA_PrivateKey(aga, faf);
 	secure_vector<byte> address;
-	size_t sum;
-	bool minerState = false;
+	size_t sum = 0;
 	Receiver receiver;
 	std::shared_ptr<Blockchain> chain;
 	std::vector<AddedOutput> availibleForAddress;

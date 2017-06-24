@@ -14,15 +14,15 @@ miner::start()
 { 
 	state = true;//NEW
   m_mining_th.reset(new std::thread(&miner::m_mining, this));
-  m_mining_th->join();
 }
 
 void
 miner::stop()
 { 
 	state = false;//new
+  m_mining_th->join();
   if (m_mining_th.get()) 
-    m_mining_th.release(); 
+    m_mining_th.release();
 }
 
 void
@@ -34,24 +34,30 @@ miner::m_mining()
       Block block;
       block.addFirstTxe(m_local_address);
       size_t cnt = 0;
-      for (size_t i = 0; i < Block::nonValidated.size(); ++i)
-        if (m_blockchain_ptr->validateTxn(Block::nonValidated[i], std::vector<std::pair<Output, size_t>>()))
-          {
-            block.addTransaction(i);
-            if (++cnt == 4) break;
-          }
+      if (Block::nonValidated.size() >= 4)
+        {
+          for (size_t i = 0; i < Block::nonValidated.size(); ++i)
+            if (m_blockchain_ptr->validateTxn(Block::nonValidated[i],
+              std::vector<std::pair<Output, size_t>>()))
+              {
+                block.addTransaction(i);
+                if (++cnt == 4) break;
+              }
+        }
       TransactionsMutex->unlock_shared();//NEW
       block.setMerkleRoot();
       BlockchainMutex->lock_shared();//NEW
       block.setNumber(m_blockchain_ptr->size());
-      block.setPrevBlock(m_blockchain_ptr->getLastBlockData());
+      if (m_blockchain_ptr->size())
+        block.setPrevBlock(m_blockchain_ptr->getLastBlockData());
       BlockchainMutex->unlock_shared();//NEW
       bool finished=false;
-      while (!finished && !state)//NEW
+      while (!finished && state)//NEW
         {
           BlockchainMutex->lock_shared();//NEW
           block.setNumber(m_blockchain_ptr->size());
-          block.setPrevBlock(m_blockchain_ptr->getLastBlockData());
+          if (m_blockchain_ptr->size())
+            block.setPrevBlock(m_blockchain_ptr->getLastBlockData());
           BlockchainMutex->unlock_shared();//NEW
             secure_vector<byte> hash = SHA_256().process(block.getBlockData());
             for (auto i = 0; i < m_bits; i++)

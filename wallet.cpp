@@ -63,7 +63,7 @@ void Wallet::commandProg()
 	std::cout << "choose variants" << std::endl;
 	std::cout << "refresh Data - print 1" << std::endl;
 	std::cout << "create new Transaction - print 2" << std::endl;
-	if (minerState)
+	if (m_miner.getState())
 	{
 		std::cout << "stop miner - print 3" << std::endl;
 	}
