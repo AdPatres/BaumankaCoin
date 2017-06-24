@@ -21,7 +21,7 @@ public:
 	uint32_t getBlockchainSize() const;
 	std::vector<Block> getBlocksAfter(uint64_t) const;
 	int64_t findByHash(secure_vector<byte>);
-
+	void addTx(const Transaction& tx);
 	std::vector<uint8_t> 
 	getLastBlockData() 
 	{ return blockChain.back().getBlockData(); }
@@ -37,6 +37,7 @@ private:
 	void restore(std::vector<std::pair<Output, size_t>>);
 	void setAvailibleTxes(Block&);
 	void clearAvailibleTxes();
+	void clearNonValidated(Block);//NEW
 	std::vector<Block> blockChain;
 	std::vector<Block> nonValidatedBlockChain;
 };

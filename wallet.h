@@ -33,18 +33,17 @@ public:
 	std::vector<secure_vector<byte>> getHashesAfter(uint64_t) const;
 
 	~Wallet();
-	void customize(size_t numberOfBlocks, secure_vector<byte> address)//CHANGED
+	void customize(size_t numberOfBlocks, secure_vector<byte> address)
 	{
 		return chain->customize(numberOfBlocks, address);
 	}
 	secure_vector<byte> getAddress() { return address; }
-	void addTx(const Transaction& tx) { Block::nonValidated.push_back(tx); }
 	void sizes()
 	{
 		std::cout << encPrivateKey.size() << std::endl;
 		std::cout << publicKey.size() << std::endl;
 	}
-	void runMiner();
+	void changeMiner();//NEW
 	void welcome();
 	void commandProg();
 
@@ -61,7 +60,7 @@ private:
 	size_t sum;
 	bool minerState = false;
 	Receiver receiver;
-	std::shared_ptr<Blockchain> chain;//CHANGED
+	std::shared_ptr<Blockchain> chain;
 	std::vector<AddedOutput> availibleForAddress;
 
 	serverd::server	m_server;

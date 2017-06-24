@@ -19,6 +19,7 @@ public:
 	bool match(Output, size_t, std::vector<uint8_t>);
 	std::pair<Output, size_t> getInfo() const;
 	std::vector<uint8_t> convertTo8();
+	bool operator==(const Input& oth) { return output == oth.output && outputHash == oth.outputHash && tailNum == oth.tailNum; }
 	friend std::ostream& operator<<(std::ostream&, const Input& o);
 private:
 	Output output;

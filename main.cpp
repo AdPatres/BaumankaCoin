@@ -1,7 +1,12 @@
 #include "./wallet.h"
 
+#include <iostream>
+
 int
 main()
 {
-  Wallet();
+  std::cerr << "lul";
+  Wallet w;
+  w.welcome();
+  std::cout << "lul";
 }

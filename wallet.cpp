@@ -6,9 +6,12 @@ std::vector<Transaction> Block::nonValidated;
 
 using namespace Botan;
 
-void Wallet::runMiner()
+void Wallet::changeMiner()//NEW
 {
-
+	if (m_miner.getState())
+		m_miner.stop();
+	else
+		m_miner.start();
 }
 void Wallet::welcome()
 {
@@ -87,7 +90,7 @@ void Wallet::commandProg()
 		}
 		case('3'):
 		{
-			runMiner();
+			changeMiner();
 			commandProg();
 		}
 		default:
@@ -106,8 +109,9 @@ Wallet& Wallet::operator = (const Wallet& v2)
 	thePrivateKey =v2.thePrivateKey;
 	address = v2.address;
 }
-void Wallet::setAvailibleForAdress()//CHANGED
+void Wallet::setAvailibleForAdress()
 {
+	BlockchainMutex->lock_shared();//NEW
 	availibleForAddress.clear();
 	for (auto i : Transaction::availibleTxes)
 	{
@@ -115,8 +119,9 @@ void Wallet::setAvailibleForAdress()//CHANGED
 			if (chain->blockChain[i.output.blockNumber].txs[i.output.txeNumber].tails[j].getInfo().second == address && !i.usedTails[j])
 				availibleForAddress.push_back(i);
 	}
+	BlockchainMutex->unlock_shared();//NEW
 }
-void Wallet::readInputs(std::istream& is, std::ostream& os)//CHANGED
+void Wallet::readInputs(std::istream& is, std::ostream& os)
 {
 	uint8_t answer = 'y';
 	while (answer == 'y')
@@ -161,28 +166,33 @@ void Wallet::createTxe(std::istream& is, std::ostream& os)//CHANGED
 {
 	receiver.clear();
 	os << "First add Inputs\n";
+	BlockchainMutex->lock_shared();//NEW
 	for (auto i : availibleForAddress)
 	{
 		for (auto j = 0; j < chain->blockChain[i.output.blockNumber].txs[i.output.txeNumber].tails.size(); j++)
 			if (chain->blockChain[i.output.blockNumber].txs[i.output.txeNumber].tails[j].getInfo().second == address && !i.usedTails[j])
 				os << "Block Number: " << i.output.blockNumber << " Txe Number: " << i.output.txeNumber << "Tail Number: " << j << " " << "Ammount of money: " << chain->blockChain[i.output.blockNumber].txs[i.output.txeNumber].tails[j].getInfo().first << "\n";
 	}
+	BlockchainMutex->lock_shared();//NEW
 	readInputs(is, os);
 	readTails(is, os);
 	receiver.sign(thePrivateKey);
 	auto tx =receiver.get();
-	//broadcast tx;
+	m_server.share(tx);
 }
-void Wallet::setCurrentSum()//CHANGED
+void Wallet::setCurrentSum()
 {
+	BlockchainMutex->lock_shared();//NEW
 	for (auto i : availibleForAddress)
 	{
 		for (auto j = 0; j < chain->blockChain[i.output.blockNumber].txs[i.output.txeNumber].tails.size(); j++)
 			if (chain->blockChain[i.output.blockNumber].txs[i.output.txeNumber].tails[j].getInfo().second == address && !i.usedTails[j])
 				sum += chain->blockChain[i.output.blockNumber].txs[i.output.txeNumber].tails[j].getInfo().first;
 	}
+	BlockchainMutex->unlock_shared();//NEW
 }
 Wallet::Wallet()//CHANGED
+: m_miner(&m_server)
 {
 	AutoSeeded_RNG rng;
 	encPrivateKey = PKCS8::BER_encode(thePrivateKey);// rng, "default"
@@ -192,9 +202,11 @@ Wallet::Wallet()//CHANGED
 	setCurrentSum();
 	receiver.Initialize(publicKey);
 	chain = Blockchain::instance();
+	m_server.start();//NEW
 }
 
-Wallet::Wallet(secure_vector<byte> priv, std::vector<byte> pub) : encPrivateKey(priv), publicKey(pub), thePrivateKey(AlgorithmIdentifier(), encPrivateKey)//add//CHANGED
+Wallet::Wallet(secure_vector<byte> priv, std::vector<byte> pub) : encPrivateKey(priv), publicKey(pub), thePrivateKey(AlgorithmIdentifier(), encPrivateKey),
+m_miner(&m_server)//add//CHANGED
 {
 	address = SHA_256().process(publicKey);
 	receiver.Initialize(publicKey);
@@ -204,15 +216,18 @@ Wallet::Wallet(secure_vector<byte> priv, std::vector<byte> pub) : encPrivateKey(
 
 Wallet::~Wallet()
 {
+	m_server.stop();//NEW
 }
 
 std::vector<secure_vector<byte>>
-Wallet::getHashesAfter(uint64_t idx) const//CHANGED
+Wallet::getHashesAfter(uint64_t idx) const
 {
+	BlockchainMutex->lock_shared();//NEW
 	++idx;
 	std::vector<secure_vector<byte>> res(chain->blockChain.size() - idx);
 	size_t j = 0;
 	for (size_t i = idx; i < chain->blockChain.size(); ++i, ++j)
 		res[j] = SHA_256().process(chain->blockChain[i].getBlockData());
 	return std::move(res);
+	BlockchainMutex->unlock_shared();//NEW
 }

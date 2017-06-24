@@ -97,10 +97,10 @@ try
   if (ec) throw std::runtime_error(ec.message());
 
   auto msg = peer_ptr->receive();
-  if (msg.first == "version") {}
-    // m_handle_version(peer_ptr, messages::create<messages::version>(msg.second));
-  else if (msg.first == "inv") {}
-    // m_handle_inv(peer_ptr, messages::create<messages::inv>(msg.second));
+  if (msg.first == "version")
+    m_handle_version(peer_ptr, messages::create<messages::version>(msg.second));
+  else if (msg.first == "inv")
+    m_handle_inv(peer_ptr, messages::create<messages::inv>(msg.second));
 }
 catch (std::exception& e)
 { std::cerr << e.what() << std::endl; }
@@ -177,36 +177,36 @@ server::m_handle_version(connection::pointer peer_ptr,
 void
 server::m_handle_inv(connection::pointer peer_ptr, const messages::inv& inv)
 {
-  // for (const auto& row : inv.inventory)
-  //   {
-  //     uint32_t amount = messages::hash_to_32(row.hash);
-  //     if (row.type == messages::inv_vect::inv_type::msg_block)
-  //       {
-  //         for (uint32_t i = 0; i < amount; ++i)
-  //           {
-  //             auto msg = peer_ptr->receive();
-  //             assert(msg.first == "block");
-  //             auto block_msg = messages::create<messages::block_message>(msg.second);
-  //             Block block;
-  //             uint32_t position = 0;
-  //             block.scanBroadcastedData(block_msg.data, position);
-  //             m_blockchain_ptr->addBlock(block);
-  //           }
-  //       }
-  //     else if (row.type == messages::inv_vect::inv_type::msg_tx)
-  //       {
-  //         for (uint32_t i = 0; i < amount; ++i)
-  //           {
-  //             auto msg = peer_ptr->receive();
-  //             assert(msg.first == "tx");
-  //             auto tx_msg = messages::create<messages::tx>(msg.second);
-  //             Transaction tx;
-  //             uint32_t position = 0;
-  //             tx.scanBroadcastedData(tx_msg.data, position);
-  //             m_blockchain_ptr->addTx(tx);
-  //           }
-  //       }
-  //   }
+  for (const auto& row : inv.inventory)
+    {
+      uint32_t amount = messages::hash_to_32(row.hash);
+      if (row.type == messages::inv_vect::inv_type::msg_block)
+        {
+          for (uint32_t i = 0; i < amount; ++i)
+            {
+              auto msg = peer_ptr->receive();
+              assert(msg.first == "block");
+              auto block_msg = messages::create<messages::block_message>(msg.second);
+              Block block;
+              uint32_t position = 0;
+              block.scanBroadcastedData(block_msg.data, position);
+              m_blockchain_ptr->addBlock(block);
+            }
+        }
+      else if (row.type == messages::inv_vect::inv_type::msg_tx)
+        {
+          for (uint32_t i = 0; i < amount; ++i)
+            {
+              auto msg = peer_ptr->receive();
+              assert(msg.first == "tx");
+              auto tx_msg = messages::create<messages::tx>(msg.second);
+              Transaction tx;
+              uint32_t position = 0;
+              tx.scanBroadcastedData(tx_msg.data, position);
+              m_blockchain_ptr->addTx(tx);
+            }
+        }
+    }
 }
 
 void
@@ -269,3 +269,72 @@ try
 }
 catch (std::exception& e)
 { std::cerr << e.what() << std::endl; }
+
+// void
+// server::share(auto data)
+// {
+//   for (const auto& addr : m_peers)
+//     m_connect(tcp::endpoint(address_v4(addr.ip), addr.port), 
+//       boost::bind(&server::m_share_handler, this, _1, _2, data));
+// }
+
+void
+server::share(const Block& b)
+{
+  for (const auto& addr : m_peers)
+    m_connect(tcp::endpoint(address_v4(addr.ip), addr.port),
+      [this, b] (const boost::system::error_code&, connection::pointer peer_ptr)
+      {
+        messages::inv inv;
+        inv.inventory.push_back(messages::inv_vect{
+          messages::inv_vect::inv_type::msg_block, messages::hash_from_32(1) });
+        peer_ptr->send(inv);
+        messages::block_message block_msg{ b.getBroadcastData() };
+        peer_ptr->send(block_msg); 
+      }
+    );
+}
+
+void
+server::share(const Transaction& tx)
+{
+  for (const auto& addr : m_peers)
+    m_connect(tcp::endpoint(address_v4(addr.ip), addr.port),
+      [this, tx] (const boost::system::error_code&, 
+        connection::pointer peer_ptr)
+      {
+        messages::inv inv;
+        inv.inventory.push_back(messages::inv_vect{
+          messages::inv_vect::inv_type::msg_tx, messages::hash_from_32(1) });
+        peer_ptr->send(inv);
+        messages::tx tx_msg{ tx.getBroadcastData() };
+        peer_ptr->send(tx_msg);  
+      }
+    );
+}
+
+// template<>
+//   void
+//   server::m_share_handler<Transaction>(const boost::system::error_code&, 
+//     connection::pointer peer_ptr, Transaction& tx)
+//   { 
+//     messages::inv inv;
+//     inv.inventory.push_back(messages::inv_vect{
+//       messages::inv_vect::inv_type::msg_tx, messages::hash_from_32(1) });
+//     peer_ptr->send(inv);
+//     messages::tx tx_msg{ tx.getBroadcastData() };
+//     peer_ptr->send(tx_msg); 
+//   }
+
+// template<>
+//   void
+//   server::m_share_handler<Block>(Block& b, 
+//     connection::pointer peer_ptr)
+//   { 
+//     messages::inv inv;
+//     inv.inventory.push_back(messages::inv_vect{
+//       messages::inv_vect::inv_type::msg_block, messages::hash_from_32(1) });
+//     peer_ptr->send(inv);
+//     messages::block_message block_msg{ b.getBroadcastData() };
+//     peer_ptr->send(block_msg); 
+//   }

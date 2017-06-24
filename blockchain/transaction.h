@@ -6,6 +6,13 @@
 #include <botan/pubkey.h>//PK_SIGNER
 #include <iostream>
 #include <botan/hex.h>
+
+#include <shared_mutex> //NEW
+#include <memory>
+
+using namespace Botan;
+extern std::shared_ptr<std::shared_timed_mutex> BlockchainMutex;//NEW
+extern std::shared_ptr<std::shared_timed_mutex> TransactionsMutex;//NEW
 class Blockchain;
 class Wallet;
 
@@ -22,6 +29,7 @@ class Transaction
 	friend Blockchain;
 	friend Wallet;
 public:
+	bool operator==(Transaction&);//NEW
 	Transaction() = default;
 	Transaction(std::vector<byte> pubKey);
 	void clear();
@@ -32,7 +40,7 @@ public:
 	bool sign(ECDSA_PrivateKey);
 	bool addAvailibleTxe(Output, size_t);
 	bool scanBroadcastedData(std::vector<uint8_t> data, uint32_t& position);
-	std::vector<uint8_t> getBroadcastData();
+	std::vector<uint8_t> getBroadcastData() const;
 	std::vector<uint8_t> getTxeData() const;
 	~Transaction();
 

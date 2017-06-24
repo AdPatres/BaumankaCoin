@@ -19,7 +19,9 @@ bool Blockchain::addBlock(Block& block)
 {
 	if (validateBlock(block))
 	{
+		BlockchainMutex->lock();//NEW
 		blockChain.push_back(block);
+		BlockchainMutex->unlock();
 		return true;
 	}
 	return false;
@@ -52,8 +54,9 @@ void Blockchain::setAvailibleTxes(Block& block)
 		block.txs[i].addAvailibleTxe(Output(block.currentNumber, i), block.txs[i].tails.size());
 	}
 }
-bool Blockchain::validateBlock(Block& block)
+bool Blockchain::validateBlock(Block& block)//NEW
 {
+	BlockchainMutex->lock_shared();//NEW
 	if (bits != block.bits)
 		return false;
 	if (block.currentNumber != blockChain.size())
@@ -68,31 +71,52 @@ bool Blockchain::validateBlock(Block& block)
 	std::cerr << "validate ok" << std::endl;
 	secure_vector<byte> hash = SHA_256().process(block.getBlockData());
 	bool validated = true;
-	// for (auto i = 0; i < bits; i++)
+	// for (auto i = 0; i < bits; i++) reuturn for hash checks
 	// {
 	// 	if (hash[i] != 0)
 	// 		validated = false;
 	// }
 	if (block.txs.size() > 0)
 	{
-		validated = validateFirstTxn(block.txs[0]);
+		validated = validated && validateFirstTxn(block.txs[0]);
 	}
 	else
 		validated = false;
 	for (auto i = 1; i < block.txs.size(); i++)
 	{
 		std::vector<std::pair<Output, size_t>> toRestore;
-		validated = validateTxn(block.txs[i], toRestore);
+		validated =validated && validateTxn(block.txs[i], toRestore);
 		if (!validated)
 			break;
 	}
+	BlockchainMutex->unlock_shared();//NEW
 	if (validated)
 	{
+		BlockchainMutex->lock();//NEW
 		setAvailibleTxes(block);
 		clearAvailibleTxes();
+		BlockchainMutex->unlock();//NEW
+		clearNonValidated(block);
+		
 	}
-
+	
+	
 	return validated;
+}
+void Blockchain::clearNonValidated(Block block)//NEW
+{
+	TransactionsMutex->lock();
+	for (auto tx : block.txs)
+	{
+		for (size_t i = 0; i < Block::nonValidated.size(); i++)
+		{
+			if (Block::nonValidated[i] == tx)
+			{
+				Block::nonValidated.erase(Block::nonValidated.begin() + i);
+			}
+		}
+	}
+	TransactionsMutex->unlock();
 }
 void Blockchain::clearAvailibleTxes()
 {
@@ -281,6 +305,7 @@ Blockchain::getBlockchainSize() const //CHANGED
 std::vector<Block>
 Blockchain::getBlocksAfter(uint64_t idx) const //CHANGED
 {
+
 	++idx;
 	std::vector<Block> res(blockChain.size() - idx);
 	for (size_t i = idx, j = 0; i < blockChain.size(); ++i, ++j)
@@ -297,4 +322,11 @@ Blockchain::findByHash(secure_vector<byte> hash)//CHANGED
 			return i;
 	}
 	return -1;
+}
+
+void Blockchain::addTx(const Transaction& tx) 
+{ 
+	TransactionsMutex->lock();
+	Block::nonValidated.push_back(tx);
+	TransactionsMutex->unlock(); 
 }

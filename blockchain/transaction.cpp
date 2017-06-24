@@ -1,5 +1,8 @@
 #include "transaction.h"
 
+std::shared_ptr<std::shared_timed_mutex> BlockchainMutex(new std::shared_timed_mutex);//NEW
+std::shared_ptr<std::shared_timed_mutex> TransactionsMutex(new std::shared_timed_mutex);//NEW
+
 
 Transaction::Transaction(std::vector<byte> pub):pubKey(pub)
 {
@@ -9,6 +12,30 @@ void Transaction::clear()
 	inputs.clear();
 	tails.clear();
 	signature.clear();
+}
+bool Transaction::operator==(Transaction& txe)//NEW
+{
+	/*std::vector<Input> inputs;
+	std::vector<Tail> tails;
+	std::vector<byte> pubKey = std::vector<byte>(279, 0);
+	std::vector<byte> signature = std::vector<byte>(64, 0);*/
+	if (inputs.size() != txe.inputs.size() || tails.size() != txe.tails.size())
+		return false;
+	for (size_t i = 0; i < inputs.size(); ++i)
+	{
+		if (!(inputs[i] == txe.inputs[i]))
+			return false;
+	}
+	for (size_t i = 0; i < tails.size(); ++i)
+	{
+		if (!(tails[i]==tails[i]))
+			return false;
+	}
+	if (pubKey != txe.pubKey)
+		return false;
+	if (signature != txe.signature)
+		return false;
+	return true;
 }
 bool Transaction::addInput(Output output, size_t tail, std::vector<uint8_t> info)
 {
@@ -98,7 +125,7 @@ Transaction::~Transaction()
 {
 }
 
-std::vector<uint8_t> Transaction::getBroadcastData()
+std::vector<uint8_t> Transaction::getBroadcastData() const
 {
 	uint32_t inputsAmount= inputs.size();
 	uint32_t tailsAmount = tails.size();
