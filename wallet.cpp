@@ -162,8 +162,14 @@ void Wallet::readTails(std::istream& is, std::ostream& os)
 		is >> answer;
 	}
 }
+
 void Wallet::createTxe(std::istream& is, std::ostream& os)//CHANGED
 {
+	if (sum == 0)
+		{
+			std::cout << "you have no money" << std::endl;
+			return;
+		}
 	receiver.clear();
 	os << "First add Inputs\n";
 	BlockchainMutex->lock_shared();//NEW
@@ -180,6 +186,7 @@ void Wallet::createTxe(std::istream& is, std::ostream& os)//CHANGED
 	auto tx =receiver.get();
 	m_server.share(tx);
 }
+
 void Wallet::setCurrentSum()
 {
 	BlockchainMutex->lock_shared();//NEW

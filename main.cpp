@@ -5,8 +5,5 @@
 int
 main()
 {
-  std::cerr << "lul";
-  Wallet w;
-  w.welcome();
-  std::cout << "lul";
+  Wallet().welcome();
 }

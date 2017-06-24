@@ -8,6 +8,7 @@
 #include <fstream>
 #include <iostream>
 
+#include <boost/foreach.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/info_parser.hpp>
 
@@ -27,30 +28,30 @@ template<typename Value, class Container>
 server::server()
 : m_acceptor(tcp::acceptor(m_ios))
 {
-  m_load();
-  std::cout << m_port << std::endl;
+  pt::ptree tree;
+  pt::read_info("adpatres.conf", tree);
+  m_port = tree.get("port", 8333);
   auto local_endp = tcp::endpoint(tcp::v4(), m_port);
   m_acceptor.open(local_endp.protocol());
   m_acceptor.bind(local_endp);
+  std::cout << "listening at port " << m_port << std::endl;
 
-  // std::fstream fst("hosts");
-  // std::string ip, port;
-  // fst >> ip >> port;
-  // tcp::endpoint endp = *tcp::resolver(m_ios).resolve(
-  //   tcp::resolver::query(tcp::v4(), ip, port));
-  // this->m_connect(endp, boost::bind(&server::m_handshake, this, _1, _2));
+  BOOST_FOREACH(pt::ptree::value_type &v, tree.get_child("hosts"))
+    {
+      auto ip = v.second.get("ip", "0.0.0.0");
+      auto port = v.second.get("port", "8333");
+      if (ip != "0.0.0.0")
+        {
+          tcp::endpoint endp = *tcp::resolver(m_ios).resolve(
+            tcp::resolver::query(tcp::v4(), ip, port));
+          this->m_connect(endp, boost::bind(&server::m_handshake, this, _1, _2));
+        }
+      std::cerr << ip << std::endl;
+    }
 }
 
 server::~server()
 { this->stop(); }
-
-void 
-server::m_load(const std::string& filename)
-{
-  pt::ptree tree;
-  pt::read_info(filename, tree);
-  m_port = tree.get("port", 8333);
-}
 
 void
 server::start()

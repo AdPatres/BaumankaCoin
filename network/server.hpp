@@ -51,9 +51,6 @@ namespace serverd
     void
     m_run();
 
-    void 
-    m_load(const std::string& filename = "adpatres.conf");
-
     void
     m_connect(const boost::asio::ip::tcp::endpoint&, ConnectHandler);
 
