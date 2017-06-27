@@ -43,23 +43,9 @@ public:
 	std::vector<uint8_t> getBroadcastData() const;
 	std::vector<uint8_t> getTxeData() const;
 	~Transaction();
-
-	void showInfo() const {
-		std::cerr << "pubkey " << Botan::hex_encode(pubKey) << std::endl;
-		std::cerr << "signature " << Botan::hex_encode(signature) << std::endl; 
-		std::cerr << "inputs" << std::endl;
-		for (auto i : inputs)
-			std::cerr << i;
-		std::cerr << "tails" << std::endl;
-		for (auto i : tails)
-			std::cerr << i;
-	}
-
-	bool removeSign()
-	{
-		signature = std::vector<byte>(64, 0);
-		return true;
-	}
+	void showInfo() const;
+	bool removeSign();
+	
 protected:
 	std::vector<Input> inputs;
 	std::vector<Tail> tails;

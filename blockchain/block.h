@@ -28,12 +28,7 @@ public:
 	bool scanBroadcastedData(std::vector<uint8_t>, uint32_t&);
 	void setNumber(size_t num) { currentNumber = num; }
 	uint32_t getCurrentNumber() const { return currentNumber; }
-	void showInfo() const
-	{
-		std::cerr << version << ' ' << currentNumber << ' ' << bits << ' ' << nonce << ' ' << txsCount << ' ' << Botan::hex_encode(merkleRoot) << std::endl;
-		for (auto a: txs)
-			a.showInfo();
-	}
+	void showInfo() const;
 	static std::vector<Transaction> nonValidated;
 protected:
 	void setHash(std::vector<byte> from, uint32_t& position,

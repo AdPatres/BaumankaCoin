@@ -61,14 +61,11 @@ bool Blockchain::validateBlock(Block& block)//NEW
 		return false;
 	if (block.currentNumber != blockChain.size())
 		return false;
-	std::cerr << "validate ok" << std::endl;
 	if (block.currentNumber != 0
 		&& block.prevBlock != SHA_256().process(blockChain.back().getBlockData()))
 		return false;
-	std::cerr << "validate ok" << std::endl;
 	if (!validateMerkleRoot(block))
 		return false;
-	std::cerr << "validate ok" << std::endl;
 	secure_vector<byte> hash = SHA_256().process(block.getBlockData());
 	bool validated = true;
 	// for (auto i = 0; i < bits; i++) reuturn for hash checks
@@ -270,12 +267,12 @@ Blockchain::customize(size_t numberOfBlocks, secure_vector<byte> address)
 	for (size_t i = 0; i < numberOfBlocks; i++)
 	{
 		Block block;
-		std::cerr << "add 1st tx " << block.addFirstTxe(address) << std::endl;
+		block.addFirstTxe(address);
 		if (blockChain.size() == 0)
 		{
-			std::cerr << "merkle " << block.setMerkleRoot() << std::endl;
+			block.setMerkleRoot();
 			// block.calculate();
-			std::cerr << std::to_string(i) << ' ' << addBlock(block) << std::endl;
+			this->addBlock(block);
 		}
 		else
 		{
@@ -283,8 +280,7 @@ Blockchain::customize(size_t numberOfBlocks, secure_vector<byte> address)
 			block.setNumber(blockChain.size());
 			block.setMerkleRoot();
 			// block.calculate();
-			std::cerr << std::to_string(i) << ' ' << addBlock(block) << std::endl;
-
+			this->addBlock(block);
 		}
 	}
 	return;

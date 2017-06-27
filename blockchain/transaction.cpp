@@ -167,3 +167,22 @@ bool Transaction::scanBroadcastedData(std::vector<uint8_t> data, uint32_t& posit
 	}
 	return true;
 }
+
+bool 
+Transaction::removeSign()
+{
+	signature = std::vector<byte>(64, 0);
+	return true;
+}
+
+void 
+Transaction::showInfo() const 
+{
+	std::cerr << "Transaction:"	<< std::endl;
+	std::cerr << "Pubkey " 			<< Botan::hex_encode(pubKey) << std::endl;
+	std::cerr << "Signature " 	<< Botan::hex_encode(signature) << std::endl;
+	for (auto i : inputs)
+		std::cerr << i;
+	for (auto i : tails)
+		std::cerr << i;
+}

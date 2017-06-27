@@ -135,3 +135,17 @@ bool Block::scanBroadcastedData(std::vector<uint8_t> data, uint32_t& position)//
 	return true;
 
 }
+
+void 
+Block::showInfo() const
+{
+	std::cerr << "Block: " << std::endl
+		<< "version: " << version << std::endl 
+		<< "Current number: " << currentNumber << std::endl 
+		<< "Bits: " << bits << std::endl 
+		<< "Nonce: " << nonce << std::endl 
+		<< "Transaction count: " << txsCount << std::endl
+		<< "Merkle root: "  << Botan::hex_encode(merkleRoot) << std::endl;
+	for (auto a: txs)
+		a.showInfo();
+}
