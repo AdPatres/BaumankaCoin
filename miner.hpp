@@ -36,6 +36,6 @@ namespace serverd
     std::unique_ptr<std::thread>  m_mining_th;
     secure_vector<byte>           m_local_address;
     uint64_t                      m_bits = 1;
-	  bool                          state = false;//new
+	  bool                          state = false;
   };
 } // namespace serverd
