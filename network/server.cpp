@@ -47,7 +47,6 @@ server::server()
             tcp::resolver::query(tcp::v4(), ip, port));
           this->m_connect(endp, boost::bind(&server::m_handshake, this, _1, _2));
         }
-      std::cerr << ip << std::endl;
     }
 }
 
@@ -89,7 +88,6 @@ server::m_accept()
   m_acceptor.async_accept(new_conn_ptr->socket(), 
     boost::bind(&server::m_handle_accept, this, 
       boost::asio::placeholders::error, new_conn_ptr));
-  std::cerr << "accepted2" << std::endl;
 }
 
 void
@@ -100,7 +98,8 @@ try
   m_accept();
   if (ec) throw std::runtime_error(ec.message());
 
-  std::cerr << "accepted" << std::endl;
+  std::cerr << "accepted from " 
+    << peer_ptr->socket().remote_endpoint().address().to_v4().to_string() << std::endl;
   auto msg = peer_ptr->receive();
   if (msg.first == "version")
     m_handle_version(peer_ptr, messages::create<messages::version>(msg.second));
@@ -114,6 +113,7 @@ void
 server::m_connect(const tcp::endpoint& endp, ConnectHandler cb)
 {
   connection::pointer peer_ptr = connection::create(m_ios);
+  std::cerr << "connecting to " << endp.address().to_v4().to_string() << ':' << std::to_string(endp.port()) << std::endl;
   peer_ptr->socket().async_connect(endp, boost::bind(cb,
     boost::asio::placeholders::error, peer_ptr));
 }
@@ -195,6 +195,7 @@ server::m_handle_inv(connection::pointer peer_ptr, const messages::inv& inv)
               Block block;
               uint32_t position = 0;
               block.scanBroadcastedData(block_msg.data, position);
+              block.showInfo();
               m_blockchain_ptr->addBlock(block);
             }
         }
@@ -208,6 +209,7 @@ server::m_handle_inv(connection::pointer peer_ptr, const messages::inv& inv)
               Transaction tx;
               uint32_t position = 0;
               tx.scanBroadcastedData(tx_msg.data, position);
+              tx.showInfo();
               m_blockchain_ptr->addTx(tx);
             }
         }
@@ -267,6 +269,7 @@ try
               Block block;
               uint32_t position = 0;
               block.scanBroadcastedData(block_msg.data, position);
+              block.showInfo();
               m_blockchain_ptr->addBlock(block);
             }
         }
@@ -295,7 +298,8 @@ server::share(const Block& b)
           messages::inv_vect::inv_type::msg_block, messages::hash_from_32(1) });
         peer_ptr->send(inv);
         messages::block_message block_msg{ b.getBroadcastData() };
-        peer_ptr->send(block_msg); 
+        peer_ptr->send(block_msg);
+        b.showInfo(); 
       }
     );
 }
@@ -314,6 +318,7 @@ server::share(const Transaction& tx)
         peer_ptr->send(inv);
         messages::tx tx_msg{ tx.getBroadcastData() };
         peer_ptr->send(tx_msg);  
+        tx.showInfo();
       }
     );
 }
