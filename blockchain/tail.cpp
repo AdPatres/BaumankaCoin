@@ -78,6 +78,6 @@ bool Tail::scan(std::vector<uint8_t> data, uint32_t& position)
 std::ostream&
 operator<<(std::ostream& os, const Tail& o)
 {
-	return os << "Tail " << o.intValue << "addr "
-		<< Botan::hex_encode(o.address) << std::endl;
+	return os << "Tail " << o.intValue 
+		<< "\tAddress:\t " << Botan::hex_encode(o.address) << std::endl;
 }

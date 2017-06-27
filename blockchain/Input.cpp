@@ -88,6 +88,6 @@ uint32_t converter8to32(std::vector<uint8_t> data, uint32_t& position)
 std::ostream&
 operator<<(std::ostream& os, const Input& o)
 {
-	return os << "out " << o.output << "out hash"
-		<< Botan::hex_encode(o.outputHash) << std::endl;
+	return os << "Input:" << o.output << std::endl
+		<< "Output hash: "	<< Botan::hex_encode(o.outputHash) << std::endl;
 }

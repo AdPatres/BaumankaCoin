@@ -19,5 +19,6 @@ bool Output::operator ==(const Output& v2) const
 std::ostream&
 operator<<(std::ostream& os, const Output& o)
 {
-	return os << "bn " <<  o.blockNumber << " tn " << o.txeNumber << std::endl;
+	return os << "Output: " << "block\t" << o.blockNumber 
+		<< "\ttx" << o.txeNumber << std::endl;
 }
