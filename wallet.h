@@ -31,19 +31,9 @@ public:
 	void setCurrentSum();
 	void createTxe(std::istream& is, std::ostream& os);
 	std::vector<secure_vector<byte>> getHashesAfter(uint64_t) const;
-
 	~Wallet();
-	void customize(size_t numberOfBlocks, secure_vector<byte> address)
-	{
-		return chain->customize(numberOfBlocks, address);
-	}
 	secure_vector<byte> getAddress() { return address; }
-	void sizes()
-	{
-		std::cout << encPrivateKey.size() << std::endl;
-		std::cout << publicKey.size() << std::endl;
-	}
-	void changeMiner();//NEW
+	void changeMiner();
 	void welcome();
 	void commandProg();
 
