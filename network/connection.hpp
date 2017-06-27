@@ -46,6 +46,6 @@ namespace serverd
       uint32_t size = static_cast<uint32_t>(payload.size());
       m_sock.send(boost::asio::buffer(&size, sizeof(size)));
       m_sock.send(boost::asio::buffer(payload.data(), payload.size()));
-      std::cerr << "send " << msg.command << std::endl;
+      std::cerr << "send " << msg.command << " message" << std::endl;
     }
 } // namespace serverd
