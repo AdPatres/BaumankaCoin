@@ -1,8 +1,1 @@
-#include "removeInput.h"
-
-
-
-
-RemoveInput::~RemoveInput()
-{
-}
+#include "./removeInput.h"

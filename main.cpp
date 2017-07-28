@@ -1,7 +1,5 @@
 #include "./wallet.h"
 
-#include <iostream>
-
 int
 main()
 {

@@ -1,10 +1,10 @@
-#include "net_addr.hpp"
+#include "./net_addr.hpp"
 
-#include <tuple>
+#include <tuple>  // tie
 
 using namespace messages;
 
-payload_t& 
+payload_t&
 operator<<(payload_t& payload, const net_addr& obj)
 {
   for (auto byte : obj.ip)
@@ -14,7 +14,7 @@ operator<<(payload_t& payload, const net_addr& obj)
   return payload;
 }
 
-std::istream& 
+std::istream&
 operator>>(std::istream& is, messages::net_addr& obj)
 {
   is.read(reinterpret_cast<char*>(&obj.ip), sizeof(obj.ip));
@@ -24,41 +24,45 @@ operator>>(std::istream& is, messages::net_addr& obj)
 
 bool
 operator!=(messages::net_addr lhs, const messages::net_addr rhs)
-{ 
+{
   auto lip = boost::asio::ip::address_v4(lhs.ip);
   auto rip = boost::asio::ip::address_v4(rhs.ip);
-  return std::tie(lip, lhs.port) != std::tie(rip, rhs.port); 
+  return std::tie(lip, lhs.port) != std::tie(rip, rhs.port);
 }
 
 bool
 operator==(messages::net_addr lhs, const messages::net_addr rhs)
-{ 
+{
   auto lip = boost::asio::ip::address_v4(lhs.ip);
   auto rip = boost::asio::ip::address_v4(rhs.ip);
-  return std::tie(lip, lhs.port) == std::tie(rip, rhs.port); 
+  return std::tie(lip, lhs.port) == std::tie(rip, rhs.port);
 }
 
-payload_t& 
+payload_t&
 operator<<(payload_t& payload, const getaddr& obj)
-{ return payload; }
+{
+  return payload;
+}
 
-std::istream& 
+std::istream&
 operator>>(std::istream& is, getaddr& obj)
-{ return is; }
+{
+  return is;
+}
 
-payload_t& 
+payload_t&
 operator<<(payload_t& payload, const addr& obj)
 {
   for (auto byte : itobl(obj.addr_list.size()))
     payload.push_back(byte);
   for (auto el : obj.addr_list)
-    payload << el; 
-  return payload; 
+    payload << el;
+  return payload;
 }
 
-std::istream& 
+std::istream&
 operator>>(std::istream& is, addr& obj)
-{ 
+{
   uint32_t size = 0;
   is.read(reinterpret_cast<char*>(&size), sizeof(size));
   obj.addr_list = std::vector<messages::net_addr>(size);
@@ -68,5 +72,5 @@ operator>>(std::istream& is, addr& obj)
       is >> na;
       obj.addr_list[i] = na;
     }
-  return is; 
+  return is;
 }

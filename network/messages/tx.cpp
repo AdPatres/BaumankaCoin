@@ -1,18 +1,18 @@
-#include "tx.hpp"
+#include "./tx.hpp"
 
 using namespace messages;
 
-payload_t& 
+payload_t&
 operator<<(payload_t& payload, const tx& obj)
 {
   for (const auto& byte : itobl(obj.data.size()))
     payload.push_back(byte);
   for (const auto& byte : obj.data)
     payload.push_back(byte);
-  return payload; 
+  return payload;
 }
 
-std::istream& 
+std::istream&
 operator>>(std::istream& is, tx& obj)
 {
   uint32_t size;

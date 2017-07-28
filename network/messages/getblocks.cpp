@@ -1,16 +1,19 @@
-#include "getblocks.hpp"
-#include <botan/hex.h>
+#include "./getblocks.hpp"
+
 #include <cassert>
 #include <exception>
 
+#include <botan/hex.h>
+
 using namespace messages;
 
-payload_t& 
+payload_t&
 operator<<(payload_t& payload, const getblocks& obj)
 {
   for (const auto& byte : obj.hash)
     payload.push_back(byte);
-  return payload; 
+  
+  return payload;
 }
 
 std::istream&
@@ -22,5 +25,6 @@ operator>>(std::istream& is, getblocks& obj)
   is.read(reinterpret_cast<char*>(ha), 32);
   for (size_t i = 0; i < 32; ++i)
     obj.hash[i] = ha[i];
+  
   return is;
 }

@@ -1,11 +1,8 @@
-#include "connection.hpp"
+#include "./connection.hpp"
 
 using namespace serverd;
 
-connection::connection(boost::asio::io_service& ios)
-: m_sock(ios)
-{ }
-
+connection::connection(boost::asio::io_service& ios) : m_sock(ios) {}
 std::pair<std::string, messages::payload_t>
 connection::receive()
 {

@@ -1,20 +1,28 @@
 #pragma once
-#include "command.h"
-class Cleaner :
-	public Command
+
+#ifndef CLEANER_H
+#define CLEANER_H
+
+#include "./command.h"
+
+class Cleaner : public Command
 {
 public:
-	Cleaner()=default;
-	void Execute()
-	{
-		std::swap(txe, removed);
-	}
+  Cleaner() = default;
+  void
+  Execute()
+  {
+    std::swap(txe, removed);
+  }
 
-	void unExecute()
-	{
-		std::swap(txe, removed);
-	}
-	~Cleaner();
+  void
+  unExecute()
+  {
+    std::swap(txe, removed);
+  }
+
 private:
-	Transaction removed;
+  Transaction removed;
 };
+
+#endif // CLEANER_H

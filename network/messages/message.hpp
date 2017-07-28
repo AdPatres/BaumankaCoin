@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef MESSAGE_H
+#define MESSAGE_H
+
 #include <array>
 #include <cstdint>
 #include <iostream>
@@ -16,28 +19,28 @@ namespace messages
 
   const uint8_t command_size = 12;
 
-  template<typename Message>
-    Message
-    create(const payload_t& payload)
-    {
-      boost::asio::streambuf buf;
-      std::iostream ios(&buf);
-      for (auto byte : payload)
-        ios << byte;
-      Message msg;
-      ios >> msg;
-      return std::move(msg);
-    }
+  template <typename Message>
+  Message
+  create(const payload_t& payload)
+  {
+    boost::asio::streambuf buf;
+    std::iostream ios(&buf);
+    for (auto byte : payload)
+      ios << byte;
+    Message msg;
+    ios >> msg;
+    return std::move(msg);
+  }
 
-  template<class Container>
-    payload_t
-    to_array(const Container& arr)
-    {
-      payload_t payload;
-      for (const auto& el : arr)
-        payload << el;
-      return std::move(payload);
-    }
+  template <class Container>
+  payload_t
+  to_array(const Container& arr)
+  {
+    payload_t payload;
+    for (const auto& el : arr)
+      payload << el;
+    return std::move(payload);
+  }
 } // namespace messages
 
 std::array<uint8_t, sizeof(uint16_t)>
@@ -45,3 +48,5 @@ itobs(uint16_t val);
 
 std::array<uint8_t, sizeof(uint32_t)>
 itobl(uint32_t val);
+
+#endif // MESSAGE_H

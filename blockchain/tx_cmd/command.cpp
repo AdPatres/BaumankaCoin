@@ -1,3 +1,3 @@
-#include "command.h"
+#include "./command.h"
 
 Transaction Command::txe;

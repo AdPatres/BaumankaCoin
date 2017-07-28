@@ -1,8 +1,3 @@
-#include "addTail.h"
+#include "./addTail.h"
 
-
-
-
-AddTail::~AddTail()
-{
-}
+// AddTail::~AddTail() {}

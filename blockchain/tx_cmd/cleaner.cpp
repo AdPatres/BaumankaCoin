@@ -1,8 +1,1 @@
-#include "cleaner.h"
-
-
-
-
-Cleaner::~Cleaner()
-{
-}
+#include "./cleaner.h"
