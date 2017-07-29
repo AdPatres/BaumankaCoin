@@ -15,12 +15,12 @@ namespace ad_patres
       const char command[command_size] = "block";
     };
   } // namespace messages
+
+  messages::payload_t&
+  operator<<(messages::payload_t&, const messages::block_message&);
+
+  std::istream&
+  operator>>(std::istream&, messages::block_message&);
 } // namespace ad_patres
-
-ad_patres::messages::payload_t&
-operator<<(ad_patres::messages::payload_t&, const ad_patres::messages::block_message&);
-
-std::istream&
-operator>>(std::istream&, ad_patres::messages::block_message&);
 
 #endif // BLOCKMSG_H

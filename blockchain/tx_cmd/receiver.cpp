@@ -1,9 +1,10 @@
 #include "./receiver.h"
 
 using namespace ad_patres;
+using namespace Botan;
 
 void
-Receiver::Initialize(std::vector<byte> key)
+Receiver::Initialize(std::vector<uint8_t> key)
 {
   keyPublic = key;
   command->setPublicKey(keyPublic);

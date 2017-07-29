@@ -1,5 +1,7 @@
 #include "./output.h"
 
+using namespace ad_patres;
+
 Output::Output(size_t blockNum, size_t txeNum)
 : blockNumber(blockNum), txeNumber(txeNum)
 {
@@ -18,7 +20,7 @@ Output::operator==(const Output& v2) const
 }
 
 std::ostream&
-operator<<(std::ostream& os, const Output& o)
+ad_patres::operator<<(std::ostream& os, const Output& o)
 {
   return os << "Output: "
             << "block\t" << o.blockNumber << "\ttx" << o.txeNumber << std::endl;

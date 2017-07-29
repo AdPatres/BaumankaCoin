@@ -2,7 +2,11 @@
 
 #include <iostream>
 
+#include <botan/secmem.h>
+#include <botan/sha2_32.h>
+
 using namespace ad_patres;
+using namespace Botan;
 
 miner::miner(server* server_ptr) : m_server_ptr(server_ptr) {}
 

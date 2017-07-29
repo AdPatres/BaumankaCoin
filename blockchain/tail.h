@@ -5,43 +5,45 @@
 
 #include <iostream>
 
-#include <botan/botan.h>
+#include <botan/secmem.h> // secure_vector
 
-using namespace Botan;
-class Tail
+namespace ad_patres
 {
-public:
-  Tail() = default;
+  class Tail
+  {
+  public:
+    Tail() = default;
 
-  Tail(size_t, secure_vector<byte>);
+    Tail(size_t, Botan::secure_vector<uint8_t>);
 
-  ~Tail();
+    ~Tail();
 
-  bool
-  operator==(const Tail& tail) const;
+    bool
+    operator==(const Tail& tail) const;
 
-  bool setValue(size_t);
+    bool setValue(size_t);
 
-  bool setAddress(secure_vector<byte>);
+    bool setAddress(Botan::secure_vector<uint8_t>);
 
-  bool
-  scan(std::vector<uint8_t>, uint32_t&);
+    bool
+    scan(std::vector<uint8_t>, uint32_t&);
 
-  std::pair<size_t, secure_vector<byte>>
-  getInfo() const;
+    std::pair<size_t, Botan::secure_vector<uint8_t>>
+    getInfo() const;
 
-  std::vector<uint8_t>
-  convertTo8();
+    std::vector<uint8_t>
+    convertTo8();
 
-  friend std::ostream&
+    friend std::ostream&
+    operator<<(std::ostream& os, const Tail& o);
+
+  private:
+    size_t intValue = 0;
+    Botan::secure_vector<uint8_t> address = Botan::secure_vector<uint8_t>(32, 0);
+  };
+
+  std::ostream&
   operator<<(std::ostream& os, const Tail& o);
-
-private:
-  size_t intValue = 0;
-  secure_vector<byte> address = secure_vector<uint8_t>(32, 0);
-};
-
-std::ostream&
-operator<<(std::ostream& os, const Tail& o);
+} // namespace ad_patres
 
 #endif // TAIL_H

@@ -17,13 +17,12 @@ namespace ad_patres
       const char command[command_size] = "getblocks";
     };
   } // namespace messages
+
+  messages::payload_t&
+  operator<<(messages::payload_t&, const messages::getblocks&);
+
+  std::istream&
+  operator>>(std::istream&, messages::getblocks&);
 } // namespace ad_patres
-
-
-ad_patres::messages::payload_t&
-operator<<(ad_patres::messages::payload_t&, const ad_patres::messages::getblocks&);
-
-std::istream&
-operator>>(std::istream&, ad_patres::messages::getblocks&);
 
 #endif // GETBLOCKS_H

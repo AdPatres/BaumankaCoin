@@ -8,7 +8,7 @@
 using namespace ad_patres::messages;
 
 payload_t&
-operator<<(payload_t& payload, const getblocks& obj)
+ad_patres::operator<<(payload_t& payload, const getblocks& obj)
 {
   for (const auto& byte : obj.hash)
     payload.push_back(byte);
@@ -17,7 +17,7 @@ operator<<(payload_t& payload, const getblocks& obj)
 }
 
 std::istream&
-operator>>(std::istream& is, getblocks& obj)
+ad_patres::operator>>(std::istream& is, getblocks& obj)
 {
   char ha[32];
   obj.hash = hash_t(32);

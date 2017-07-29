@@ -1,5 +1,13 @@
 #include "./Input.h"
 
+#include <botan/hex.h>
+#include <botan/sha2_32.h>
+
+using namespace ad_patres;
+using namespace Botan;
+
+Input::~Input() {}
+
 bool
 Input::setOutput(Output out)
 {
@@ -52,7 +60,6 @@ Input::getInfo() const
   return std::pair<Output, size_t>(output, tailNum);
 }
 
-Input::~Input() {}
 bool
 Input::scan(std::vector<uint8_t> data, uint32_t& position)
 {
@@ -99,7 +106,7 @@ Input::operator==(const Input& oth)
 }
 
 std::ostream&
-operator<<(std::ostream& os, const Input& o)
+ad_patres::operator<<(std::ostream& os, const Input& o)
 {
   return os << "Input:" << o.output << std::endl
             << "Output hash: " << Botan::hex_encode(o.outputHash) << std::endl;

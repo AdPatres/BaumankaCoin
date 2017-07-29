@@ -25,7 +25,7 @@ ad_patres::messages::hash_to_32(const messages::hash_t& data)
 }
 
 payload_t&
-operator<<(payload_t& payload, const inv_vect& obj)
+ad_patres::operator<<(payload_t& payload, const inv_vect& obj)
 {
   for (const auto& byte : itobl(static_cast<uint32_t>(obj.type)))
     payload.push_back(byte);
@@ -35,7 +35,7 @@ operator<<(payload_t& payload, const inv_vect& obj)
 }
 
 std::istream&
-operator>>(std::istream& is, inv_vect& obj)
+ad_patres::operator>>(std::istream& is, inv_vect& obj)
 {
   is.read(reinterpret_cast<char*>(&obj.type), sizeof(obj.type));
   obj.hash = hash_t(32);
@@ -49,7 +49,7 @@ operator>>(std::istream& is, inv_vect& obj)
 }
 
 payload_t&
-operator<<(payload_t& payload, const inv& obj)
+ad_patres::operator<<(payload_t& payload, const inv& obj)
 {
   for (const auto& byte : itobl(obj.inventory.size()))
     payload.push_back(byte);
@@ -60,7 +60,7 @@ operator<<(payload_t& payload, const inv& obj)
 }
 
 std::istream&
-operator>>(std::istream& is, inv& obj)
+ad_patres::operator>>(std::istream& is, inv& obj)
 {
   uint32_t size;
   is.read(reinterpret_cast<char*>(&size), sizeof(size));
@@ -76,7 +76,7 @@ operator>>(std::istream& is, inv& obj)
 }
 
 payload_t&
-operator<<(payload_t& payload, const getdata& obj)
+ad_patres::operator<<(payload_t& payload, const getdata& obj)
 {
   for (const auto& byte : itobl(obj.inventory.size()))
     payload.push_back(byte);
@@ -87,7 +87,7 @@ operator<<(payload_t& payload, const getdata& obj)
 }
 
 std::istream&
-operator>>(std::istream& is, getdata& obj)
+ad_patres::operator>>(std::istream& is, getdata& obj)
 {
   uint32_t size;
   is.read(reinterpret_cast<char*>(&size), sizeof(size));

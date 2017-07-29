@@ -31,18 +31,18 @@ namespace ad_patres
       const char command[command_size] = "verack";
     };
   } // namespace messages
+
+  messages::payload_t&
+  operator<<(messages::payload_t&, const messages::version&);
+
+  std::istream&
+  operator>>(std::istream&, messages::version&);
+
+  messages::payload_t&
+  operator<<(messages::payload_t&, const messages::verack&);
+
+  std::istream&
+  operator>>(std::istream&, messages::verack&);
 } // namespace ad_patres
-
-ad_patres::messages::payload_t&
-operator<<(ad_patres::messages::payload_t&, const ad_patres::messages::version&);
-
-std::istream&
-operator>>(std::istream&, ad_patres::messages::version&);
-
-ad_patres::messages::payload_t&
-operator<<(ad_patres::messages::payload_t&, const ad_patres::messages::verack&);
-
-std::istream&
-operator>>(std::istream&, ad_patres::messages::verack&);
 
 #endif // VERSION_H

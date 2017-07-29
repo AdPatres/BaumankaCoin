@@ -8,6 +8,8 @@
 #include <memory>
 #include <vector>
 
+#include <botan/secmem.h>
+
 namespace ad_patres
 {
   class Blockchain
@@ -15,9 +17,7 @@ namespace ad_patres
     friend Wallet;
 
   public:
-    Blockchain();
-
-    ~Blockchain();
+    ~Blockchain() = default;
 
     void
     getBlockchain();
@@ -35,7 +35,7 @@ namespace ad_patres
     addBlock(Block&);
 
     void
-    customize(size_t numberOfBlocks, secure_vector<byte> address);
+    customize(size_t numberOfBlocks, Botan::secure_vector<uint8_t> address);
 
     static std::shared_ptr<Blockchain>
     instance();
@@ -43,7 +43,7 @@ namespace ad_patres
     bool
     validateTxn(const Transaction&, std::vector<std::pair<Output, size_t>>);
 
-    secure_vector<byte>
+    Botan::secure_vector<uint8_t>
     getLastBlockHash();
 
     uint32_t
@@ -51,38 +51,49 @@ namespace ad_patres
 
     std::vector<Block> getBlocksAfter(uint64_t) const;
 
-    int64_t findByHash(secure_vector<byte>);
+    int64_t findByHash(Botan::secure_vector<uint8_t>);
 
     void
     addTx(const Transaction& tx);
 
     std::vector<uint8_t>
-    getLastBlockData();
+    getLastBlockData() const;
 
   private:
     static std::shared_ptr<Blockchain> _self;
+
     size_t bits = 1;
+
     bool
     validateBlock(Block&);
+
     bool
     validateMerkleRoot(const Block&);
+
     bool
     validateFirstTxn(const Transaction&);
+
+    // returns amount of money taken from inputs
     size_t
     validateInputs(const Transaction&,
-                  std::vector<std::pair<Output, size_t>>); // returns amount of
-                                                            // money taken from
-                                                            // inputs
+                  std::vector<std::pair<Output, size_t>>);
+                            
     bool
     validateSignature(const Transaction&);
+
     bool
     validateTails(const Transaction&, size_t);
+
     void restore(std::vector<std::pair<Output, size_t>>);
+
     void
     setAvailibleTxes(Block&);
+
     void
     clearAvailibleTxes();
-    void clearNonValidated(Block); // NEW
+
+    void clearNonValidated(Block); 
+    
     std::vector<Block> blockChain;
     std::vector<Block> nonValidatedBlockChain;
   };

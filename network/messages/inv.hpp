@@ -41,24 +41,23 @@ namespace ad_patres
       const char command[command_size] = "getdata";
     };
   } // namespace messages
+
+  messages::payload_t&
+  operator<<(messages::payload_t&, const messages::inv_vect&);
+
+  std::istream&
+  operator>>(std::istream&, messages::inv_vect&);
+
+  messages::payload_t&
+  operator<<(messages::payload_t&, const messages::inv&);
+
+  std::istream&
+  operator>>(std::istream&, messages::inv&);
+
+  messages::payload_t&
+  operator<<(messages::payload_t&, const messages::getdata&);
+
+  std::istream&
+  operator>>(std::istream&, messages::getdata&);
 } // namespace ad_patres
-
-ad_patres::messages::payload_t&
-operator<<(ad_patres::messages::payload_t&, const ad_patres::messages::inv_vect&);
-
-std::istream&
-operator>>(std::istream&, ad_patres::messages::inv_vect&);
-
-ad_patres::messages::payload_t&
-operator<<(ad_patres::messages::payload_t&, const ad_patres::messages::inv&);
-
-std::istream&
-operator>>(std::istream&, ad_patres::messages::inv&);
-
-ad_patres::messages::payload_t&
-operator<<(ad_patres::messages::payload_t&, const ad_patres::messages::getdata&);
-
-std::istream&
-operator>>(std::istream&, ad_patres::messages::getdata&);
-
 #endif // INV_H

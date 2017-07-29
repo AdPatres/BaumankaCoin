@@ -3,7 +3,7 @@
 using namespace ad_patres::messages;
 
 payload_t&
-operator<<(payload_t& payload, const block_message& obj)
+ad_patres::operator<<(payload_t& payload, const block_message& obj)
 {
   for (const auto& byte : itobl(obj.data.size()))
     payload.push_back(byte);
@@ -13,7 +13,7 @@ operator<<(payload_t& payload, const block_message& obj)
 }
 
 std::istream&
-operator>>(std::istream& is, block_message& obj)
+ad_patres::operator>>(std::istream& is, block_message& obj)
 {
   uint32_t size;
   is.read(reinterpret_cast<char*>(&size), sizeof(size));

@@ -10,9 +10,7 @@
 #include <iostream>
 #include <vector>
 
-#include <botan/botan.h>
-#include <botan/hex.h>
-#include <botan/sha2_32.h>
+#include <botan/secmem.h>
 
 namespace ad_patres 
 {
@@ -38,7 +36,7 @@ namespace ad_patres
     getCurrentNumber() const;
 
     bool
-    addFirstTxe(secure_vector<byte> address);
+    addFirstTxe(Botan::secure_vector<uint8_t> address);
 
     bool addTransaction(size_t = nonValidated.size());
 
@@ -66,13 +64,13 @@ namespace ad_patres
 
   protected:
     void
-    setHash(std::vector<byte> from, uint32_t& position,
-            secure_vector<uint8_t>& to);
+    setHash(std::vector<uint8_t> from, uint32_t& position,
+            Botan::secure_vector<uint8_t>& to);
             
     size_t version = 1;                                         // default value
-    secure_vector<byte> prevBlock = secure_vector<byte>(32, 0); // hash
+    Botan::secure_vector<uint8_t> prevBlock = Botan::secure_vector<uint8_t>(32, 0); // hash
     size_t currentNumber = 0;
-    secure_vector<byte> merkleRoot = secure_vector<byte>(32, 0);
+    Botan::secure_vector<uint8_t> merkleRoot = Botan::secure_vector<uint8_t>(32, 0);
     size_t bits = 1;  // Proof of work difficulty
     size_t nonce = 0; // to change hash
     size_t txsCount = 0; // hash untill this

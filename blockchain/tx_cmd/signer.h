@@ -5,6 +5,7 @@
 
 #include "./command.h"
 
+#include <botan/ecdsa.h>
 #include <botan/pubkey.h>
 
 namespace ad_patres
@@ -12,7 +13,7 @@ namespace ad_patres
   class Signer : public Command
   {
   public:
-    Signer(ECDSA_PrivateKey privKey);
+    Signer(Botan::ECDSA_PrivateKey);
 
     void
     Execute();
@@ -21,7 +22,7 @@ namespace ad_patres
     unExecute();
 
   private:
-    ECDSA_PrivateKey key;
+    Botan::ECDSA_PrivateKey key;
   };
 }; // namespace ad_patres
 

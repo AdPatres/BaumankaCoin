@@ -5,6 +5,8 @@
 
 #include "../transaction.h"
 
+#include <vector>
+
 #include <botan/botan.h>
 
 namespace ad_patres

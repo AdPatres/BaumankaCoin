@@ -12,9 +12,13 @@
 #include <boost/property_tree/info_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 
-using namespace boost::asio::ip;
-namespace pt = boost::property_tree;
+#include <botan/sha2_32.h>
+
 using namespace ad_patres;
+using namespace boost::asio::ip;
+using namespace Botan;
+namespace pt = boost::property_tree;
+
 
 template <typename Value, class Container>
 bool

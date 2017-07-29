@@ -15,12 +15,12 @@ namespace ad_patres
       const char command[command_size] = "tx";
     };
   } // namespace messages
+
+  messages::payload_t&
+  operator<<(messages::payload_t&, const messages::tx&);
+
+  std::istream&
+  operator>>(std::istream&, messages::tx&);
 } // namespace ad_patres
-
-ad_patres::messages::payload_t&
-operator<<(ad_patres::messages::payload_t&, const ad_patres::messages::tx&);
-
-std::istream&
-operator>>(std::istream&, ad_patres::messages::tx&);
 
 #endif // TXMSG_H

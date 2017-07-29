@@ -29,31 +29,31 @@ namespace ad_patres
       const char command[command_size] = "addr";
       std::vector<net_addr> addr_list;
     };
-  }
-}
+  } // namespace messages
 
-ad_patres::messages::payload_t&
-operator<<(ad_patres::messages::payload_t&, const ad_patres::messages::net_addr&);
+  messages::payload_t&
+  operator<<(messages::payload_t&, const messages::net_addr&);
 
-std::istream&
-operator>>(std::istream&, ad_patres::messages::net_addr&);
+  std::istream&
+  operator>>(std::istream&, messages::net_addr&);
 
-bool
-operator!=(ad_patres::messages::net_addr lhs, const ad_patres::messages::net_addr rhs);
+  bool
+  operator!=(messages::net_addr lhs, const messages::net_addr rhs);
 
-bool
-operator==(ad_patres::messages::net_addr lhs, const ad_patres::messages::net_addr rhs);
+  bool
+  operator==(messages::net_addr lhs, const messages::net_addr rhs);
 
-ad_patres::messages::payload_t&
-operator<<(ad_patres::messages::payload_t&, const ad_patres::messages::getaddr&);
+  messages::payload_t&
+  operator<<(messages::payload_t&, const messages::getaddr&);
 
-std::istream&
-operator>>(std::istream&, ad_patres::messages::getaddr&);
+  std::istream&
+  operator>>(std::istream&, messages::getaddr&);
 
-ad_patres::messages::payload_t&
-operator<<(ad_patres::messages::payload_t&, const ad_patres::messages::addr&);
+  messages::payload_t&
+  operator<<(messages::payload_t&, const messages::addr&);
 
-std::istream&
-operator>>(std::istream&, ad_patres::messages::addr&);
+  std::istream&
+  operator>>(std::istream&, messages::addr&);
+} // namespace ad_patres
 
 #endif // NETADDR_H

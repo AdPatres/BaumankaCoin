@@ -16,7 +16,7 @@ version::version(tcp::endpoint endp, uint16_t port)
 }
 
 payload_t&
-operator<<(payload_t& payload, const version& obj)
+ad_patres::operator<<(payload_t& payload, const version& obj)
 {
   payload << obj.addr_recv << obj.addr_from;
   for (auto byte : itobl(obj.nonce))
@@ -25,7 +25,7 @@ operator<<(payload_t& payload, const version& obj)
 }
 
 std::istream&
-operator>>(std::istream& is, version& obj)
+ad_patres::operator>>(std::istream& is, version& obj)
 {
   is >> obj.addr_recv >> obj.addr_from;
   is.read(reinterpret_cast<char*>(&obj.nonce), sizeof(obj.nonce));
@@ -33,13 +33,13 @@ operator>>(std::istream& is, version& obj)
 }
 
 payload_t&
-operator<<(payload_t& payload, const verack& obj)
+ad_patres::operator<<(payload_t& payload, const verack& obj)
 {
   return payload;
 }
 
 std::istream&
-operator<<(std::istream& is, verack& obj)
+ad_patres::operator>>(std::istream& is, verack& obj)
 {
   return is;
 }

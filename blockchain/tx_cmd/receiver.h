@@ -10,17 +10,21 @@
 #include "./removeTail.h"
 #include "./signer.h"
 
+#include <vector>
+
+#include <botan/ecdsa.h>
+
 namespace ad_patres
 {
 class Receiver
 {
   std::vector<Command*> DoneCommands;
-  std::vector<byte> keyPublic;
+  std::vector<uint8_t> keyPublic;
   Command* command;
 
 public:
   void
-  Initialize(std::vector<byte> key);
+  Initialize(std::vector<uint8_t> key);
 
   Transaction
   get() const;
@@ -38,7 +42,7 @@ public:
   removeTail(Tail tail);
   
   void
-  sign(ECDSA_PrivateKey privKey);
+  sign(Botan::ECDSA_PrivateKey privKey);
 
   void
   clear();

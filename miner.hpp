@@ -9,6 +9,8 @@
 #include <memory> // shared_ptr, unique_ptr
 #include <thread>
 
+#include <botan/secmem.h>
+
 namespace ad_patres
 {
   class miner
@@ -35,7 +37,7 @@ namespace ad_patres
 
     std::shared_ptr<Blockchain> m_blockchain_ptr = Blockchain::instance();
     std::unique_ptr<std::thread> m_mining_th;
-    secure_vector<byte> m_local_address;
+    Botan::secure_vector<uint8_t> m_local_address;
     uint64_t m_bits = 1;
     bool state = false;
   };

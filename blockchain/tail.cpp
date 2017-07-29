@@ -4,6 +4,9 @@
 
 #include <botan/hex.h>
 
+using namespace ad_patres;
+using namespace Botan;
+
 Tail::Tail(size_t integer, secure_vector<byte> destination)
 {
   intValue = integer;
@@ -84,7 +87,7 @@ Tail::scan(std::vector<uint8_t> data, uint32_t& position)
 }
 
 std::ostream&
-operator<<(std::ostream& os, const Tail& o)
+ad_patres::operator<<(std::ostream& os, const Tail& o)
 {
   return os << "Tail " << o.intValue << "\tAddress:\t "
             << Botan::hex_encode(o.address) << std::endl;

@@ -6,57 +6,58 @@
 #include "./output.h"
 
 #include <iostream>
+#include <vector>
 
-#include <botan/botan.h>
-#include <botan/hex.h>
-#include <botan/sha2_32.h>
+#include <botan/secmem.h>
 
-using namespace Botan;
-class Input
+namespace ad_patres
 {
-public:
-  Input() = default;
+  class Input
+  {
+  public:
+    Input() = default;
 
-  ~Input();
+    ~Input();
 
-  bool setOutput(size_t, size_t);
+    bool setOutput(size_t, size_t);
 
-  bool setOutput(Output);
+    bool setOutput(Output);
 
-  bool setHash(std::vector<uint8_t>);
+    bool setHash(std::vector<uint8_t>);
 
-  bool setTailNum(size_t);
+    bool setTailNum(size_t);
 
-  bool
-  scan(std::vector<uint8_t>, uint32_t&);
+    bool
+    scan(std::vector<uint8_t>, uint32_t&);
 
-  bool match(Output, size_t, std::vector<uint8_t>);
+    bool match(Output, size_t, std::vector<uint8_t>);
 
-  std::pair<Output, size_t>
-  getInfo() const;
+    std::pair<Output, size_t>
+    getInfo() const;
 
-  std::vector<uint8_t>
-  convertTo8();
+    std::vector<uint8_t>
+    convertTo8();
 
-  bool
-  operator==(const Input&);
+    bool
+    operator==(const Input&);
 
-  friend std::ostream&
-  operator<<(std::ostream&, const Input&);
+    friend std::ostream&
+    operator<<(std::ostream&, const Input&);
 
-private:
-  Output output;
-  secure_vector<byte> outputHash = secure_vector<byte>(32, 0);
-  size_t tailNum = 0;
-};
+  private:
+    Output output;
+    Botan::secure_vector<uint8_t> outputHash = Botan::secure_vector<uint8_t>(32, 0);
+    size_t tailNum = 0;
+  };
+
+  std::ostream&
+  operator<<(std::ostream&, const ad_patres::Input&);
+} // namespace ad_patres
 
 void
 converter32to8(uint32_t from, std::vector<uint8_t>& to);
 
 uint32_t
 converter8to32(std::vector<uint8_t>, uint32_t&);
-
-std::ostream&
-operator<<(std::ostream&, const Input&);
 
 #endif // INPUT_H
