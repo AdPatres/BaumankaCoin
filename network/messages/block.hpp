@@ -3,21 +3,24 @@
 #ifndef BLOCKMSG_H
 #define BLOCKMSG_H
 
-#include "message.hpp"
+#include "./message.hpp"
 
-namespace messages
+namespace ad_patres
 {
-  struct block_message
+  namespace messages
   {
-    payload_t data;
-    const char command[command_size] = "block";
-  };
-} // namespace messages
+    struct block_message
+    {
+      payload_t data;
+      const char command[command_size] = "block";
+    };
+  } // namespace messages
+} // namespace ad_patres
 
-messages::payload_t&
-operator<<(messages::payload_t&, const messages::block_message&);
+ad_patres::messages::payload_t&
+operator<<(ad_patres::messages::payload_t&, const ad_patres::messages::block_message&);
 
 std::istream&
-operator>>(std::istream&, messages::block_message&);
+operator>>(std::istream&, ad_patres::messages::block_message&);
 
 #endif // BLOCKMSG_H

@@ -11,7 +11,7 @@
 
 #include <boost/asio.hpp>
 
-namespace serverd
+namespace ad_patres
 {
   class connection // network connection repr
   {
@@ -55,6 +55,6 @@ namespace serverd
     m_sock.send(boost::asio::buffer(payload.data(), payload.size()));
     std::cerr << "send " << msg.command << " message" << std::endl;
   }
-} // namespace serverd
+} // namespace ad_patres
 
 #endif // CONNECTION_H

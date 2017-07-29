@@ -7,30 +7,24 @@
 
 #include <vector>
 
-class AddInput : public Command
+namespace ad_patres
 {
-public:
-  AddInput(Output out, size_t tail, std::vector<uint8_t> hashInfo)
-  : output(out), tailNum(tail), hash(hashInfo)
+  class AddInput : public Command
   {
-  }
-  
-  void
-  Execute()
-  {
-    txe.addInput(output, tailNum, hash);
-  }
+  public:
+    AddInput(Output out, size_t tail, std::vector<uint8_t>);
+    
+    void
+    Execute();
 
-  void
-  unExecute()
-  {
-    txe.removeInput(output, tailNum, hash);
-  }
+    void
+    unExecute();
 
-private:
-  Output output;
-  size_t tailNum;
-  std::vector<uint8_t> hash;
-};
+  private:
+    Output output;
+    size_t tailNum;
+    std::vector<uint8_t> hash;
+  };
+}; // namespace ad_patres
 
 #endif // ADDINPUT_H

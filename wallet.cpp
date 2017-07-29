@@ -1,5 +1,6 @@
 #include "./wallet.h"
 
+using namespace ad_patres;
 using namespace Botan;
 
 std::vector<AddedOutput> Transaction::availibleTxes;

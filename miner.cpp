@@ -2,9 +2,9 @@
 
 #include <iostream>
 
-using namespace serverd;
+using namespace ad_patres;
 
-miner::miner(serverd::server* server_ptr) : m_server_ptr(server_ptr) {}
+miner::miner(server* server_ptr) : m_server_ptr(server_ptr) {}
 
 miner::~miner() { this->stop(); }
 

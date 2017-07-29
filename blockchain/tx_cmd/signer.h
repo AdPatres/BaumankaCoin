@@ -7,24 +7,22 @@
 
 #include <botan/pubkey.h>
 
-class Signer : public Command
+namespace ad_patres
 {
-public:
-  Signer(ECDSA_PrivateKey privKey) : key(privKey) {}
-  void
-  Execute()
+  class Signer : public Command
   {
-    txe.sign(key);
-  }
+  public:
+    Signer(ECDSA_PrivateKey privKey);
 
-  void
-  unExecute()
-  {
-    txe.removeSign();
-  }
+    void
+    Execute();
 
-private:
-  ECDSA_PrivateKey key;
-};
+    void
+    unExecute();
+
+  private:
+    ECDSA_PrivateKey key;
+  };
+}; // namespace ad_patres
 
 #endif // SIGNER_H

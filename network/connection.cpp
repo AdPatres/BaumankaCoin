@@ -1,6 +1,6 @@
 #include "./connection.hpp"
 
-using namespace serverd;
+using namespace ad_patres;
 
 connection::connection(boost::asio::io_service& ios) : m_sock(ios) {}
 std::pair<std::string, messages::payload_t>

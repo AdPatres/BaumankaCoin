@@ -1,4 +1,9 @@
-#include "block.h"
+#include "./block.h"
+
+#include <cassert>
+
+using namespace ad_patres;
+using namespace Botan;
 
 bool
 Block::addFirstTxe(secure_vector<byte> address)
@@ -11,6 +16,12 @@ Block::addFirstTxe(secure_vector<byte> address)
   txs.push_back(first);
   txsCount++;
   return true;
+}
+
+uint32_t
+Block::getCurrentNumber() const
+{
+  return currentNumber;
 }
 
 bool
@@ -45,6 +56,12 @@ Block::getBlockData() const
 
   return data;
   // std::memset(buffer, 0, sizeof(buffer));
+}
+
+void
+Block::setNumber(size_t num)
+{
+  currentNumber = num;
 }
 
 bool

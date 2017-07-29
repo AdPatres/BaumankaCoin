@@ -1,9 +1,12 @@
 #include "./transaction.h"
 
+using namespace ad_patres;
+
 std::shared_ptr<std::shared_timed_mutex>
-  BlockchainMutex(new std::shared_timed_mutex); // NEW
+ad_patres::BlockchainMutex(new std::shared_timed_mutex);
+
 std::shared_ptr<std::shared_timed_mutex>
-  TransactionsMutex(new std::shared_timed_mutex); // NEW
+ad_patres::TransactionsMutex(new std::shared_timed_mutex);
 
 Transaction::Transaction(std::vector<byte> pub) : pubKey(pub) {}
 void
@@ -14,7 +17,7 @@ Transaction::clear()
   signature.clear();
 }
 bool
-Transaction::operator==(Transaction& txe) // NEW
+Transaction::operator==(Transaction& txe)
 {
   /*std::vector<Input> inputs;
   std::vector<Tail> tails;

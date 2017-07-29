@@ -1,9 +1,9 @@
 #include "./inv.hpp"
 
-using namespace messages;
+using namespace ad_patres::messages;
 
 hash_t
-messages::hash_from_32(const uint32_t value)
+ad_patres::messages::hash_from_32(const uint32_t value)
 {
   messages::hash_t res = messages::hash_t(32, 0);
   size_t i = 0;
@@ -14,7 +14,7 @@ messages::hash_from_32(const uint32_t value)
 }
 
 uint32_t
-messages::hash_to_32(const messages::hash_t& data)
+ad_patres::messages::hash_to_32(const messages::hash_t& data)
 {
   uint8_t a[4];
   for (size_t i = 0; i < 4; i++)

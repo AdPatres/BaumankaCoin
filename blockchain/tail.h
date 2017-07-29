@@ -3,7 +3,6 @@
 #ifndef TAIL_H
 #define TAIL_H
 
-#include <cassert>
 #include <iostream>
 
 #include <botan/botan.h>

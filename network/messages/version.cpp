@@ -2,7 +2,7 @@
 
 #include <ctime>
 
-using namespace messages;
+using namespace ad_patres::messages;
 using namespace boost::asio::ip;
 
 version::version(tcp::endpoint endp, uint16_t port)
@@ -25,7 +25,7 @@ operator<<(payload_t& payload, const version& obj)
 }
 
 std::istream&
-operator>>(std::istream& is, messages::version& obj)
+operator>>(std::istream& is, version& obj)
 {
   is >> obj.addr_recv >> obj.addr_from;
   is.read(reinterpret_cast<char*>(&obj.nonce), sizeof(obj.nonce));

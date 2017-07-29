@@ -1,5 +1,7 @@
 #include "./tail.h"
 
+#include <cassert>
+
 #include <botan/hex.h>
 
 Tail::Tail(size_t integer, secure_vector<byte> destination)

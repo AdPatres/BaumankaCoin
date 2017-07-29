@@ -4,25 +4,29 @@
 #define ADDTAIL_H
 
 #include "./command.h"
-class AddTail : public Command
+
+namespace ad_patres
 {
-public:
-  AddTail(Tail tailObj) : tail(tailObj) {}
-  
-  void
-  Execute()
+  class AddTail : public Command
   {
-    txe.addTail(tail);
-  }
+  public:
+    AddTail(Tail tailObj) : tail(tailObj) {}
+    
+    void
+    Execute()
+    {
+      txe.addTail(tail);
+    }
 
-  void
-  unExecute()
-  {
-    txe.removeTail(tail);
-  }
+    void
+    unExecute()
+    {
+      txe.removeTail(tail);
+    }
 
-private:
-  Tail tail;
-};
+  private:
+    Tail tail;
+  };
+}; // namespace ad_patres
 
 #endif // ADDTAIL_H

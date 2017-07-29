@@ -12,41 +12,44 @@
 #include <botan/botan.h>
 #include <botan/hex.h>
 
-namespace messages
+namespace ad_patres
 {
-  using payload_t = std::vector<uint8_t>; // bytes
-  using hash_t = Botan::secure_vector<uint8_t>;
-
-  const uint8_t command_size = 12;
-
-  template <typename Message>
-  Message
-  create(const payload_t& payload)
+  namespace messages
   {
-    boost::asio::streambuf buf;
-    std::iostream ios(&buf);
-    for (auto byte : payload)
-      ios << byte;
-    Message msg;
-    ios >> msg;
-    return std::move(msg);
-  }
+    using payload_t = std::vector<uint8_t>; // bytes
+    using hash_t = Botan::secure_vector<uint8_t>;
 
-  template <class Container>
-  payload_t
-  to_array(const Container& arr)
-  {
-    payload_t payload;
-    for (const auto& el : arr)
-      payload << el;
-    return std::move(payload);
-  }
-} // namespace messages
+    const uint8_t command_size = 12;
 
-std::array<uint8_t, sizeof(uint16_t)>
-itobs(uint16_t val);
+    template <typename Message>
+    Message
+    create(const payload_t& payload)
+    {
+      boost::asio::streambuf buf;
+      std::iostream ios(&buf);
+      for (auto byte : payload)
+        ios << byte;
+      Message msg;
+      ios >> msg;
+      return std::move(msg);
+    }
 
-std::array<uint8_t, sizeof(uint32_t)>
-itobl(uint32_t val);
+    template <class Container>
+    payload_t
+    to_array(const Container& arr)
+    {
+      payload_t payload;
+      for (const auto& el : arr)
+        payload << el;
+      return std::move(payload);
+    }
+
+    std::array<uint8_t, sizeof(uint16_t)>
+    itobs(uint16_t val);
+
+    std::array<uint8_t, sizeof(uint32_t)>
+    itobl(uint32_t val);
+  } // namespace messages
+} // namespace ad_patres
 
 #endif // MESSAGE_H

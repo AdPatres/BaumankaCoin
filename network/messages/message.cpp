@@ -2,10 +2,10 @@
 
 #include <arpa/inet.h>
 
-using namespace messages;
+using namespace ad_patres::messages;
 
 std::array<uint8_t, sizeof(uint16_t)>
-itobs(uint16_t val)
+ad_patres::messages::itobs(uint16_t val)
 {
   val = static_cast<uint16_t>(::htons(val));
   std::array<uint8_t, sizeof(uint16_t)> arr;
@@ -15,7 +15,7 @@ itobs(uint16_t val)
 }
 
 std::array<uint8_t, sizeof(uint32_t)>
-itobl(uint32_t val)
+ad_patres::messages::itobl(uint32_t val)
 {
   val = static_cast<uint32_t>(::htonl(val));
   std::array<uint8_t, sizeof(uint32_t)> arr;

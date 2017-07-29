@@ -25,63 +25,66 @@
 #include <memory>
 #include <vector>
 
-class Wallet
+namespace ad_patres
 {
-public:
-  Wallet();
+  class Wallet
+  {
+  public:
+    Wallet();
 
-  Wallet(secure_vector<uint8_t>, std::vector<uint8_t>);
+    Wallet(secure_vector<uint8_t>, std::vector<uint8_t>);
 
-  ~Wallet();
+    ~Wallet();
 
-  Wallet&
-  operator=(const Wallet&);
+    Wallet&
+    operator=(const Wallet&);
 
-  secure_vector<uint8_t>
-  getAddress() const;
+    secure_vector<uint8_t>
+    getAddress() const;
 
-  std::vector<secure_vector<uint8_t>> getHashesAfter(uint64_t) const;
+    std::vector<secure_vector<uint8_t>> getHashesAfter(uint64_t) const;
 
-  void
-  setAvailibleForAdress();
+    void
+    setAvailibleForAdress();
 
-  void
-  setCurrentSum();
+    void
+    setCurrentSum();
 
-  void
-  createTxe(std::istream&, std::ostream&);
+    void
+    createTxe(std::istream&, std::ostream&);
 
-  void
-  changeMiner();
+    void
+    changeMiner();
 
-  void
-  welcome();
+    void
+    welcome();
 
-  void
-  commandProg();
+    void
+    commandProg();
 
-private:
-  void
-  readInputs(std::istream&, std::ostream&);
+  private:
+    void
+    readInputs(std::istream&, std::ostream&);
 
-  void
-  readTails(std::istream&, std::ostream&);
+    void
+    readTails(std::istream&, std::ostream&);
 
-  AutoSeeded_RNG aga;
-  EC_Group faf = EC_Group("secp256k1");
-  secure_vector<uint8_t> encPrivateKey;
-  std::vector<uint8_t> publicKey;
-  ECDSA_PrivateKey thePrivateKey = ECDSA_PrivateKey(aga, faf);
+    AutoSeeded_RNG aga;
+    EC_Group faf = EC_Group("secp256k1");
+    secure_vector<uint8_t> encPrivateKey;
+    std::vector<uint8_t> publicKey;
+    ECDSA_PrivateKey thePrivateKey = ECDSA_PrivateKey(aga, faf);
 
-  secure_vector<uint8_t> address;
-  size_t sum = 0;
-  Receiver receiver;
+    secure_vector<uint8_t> address;
+    size_t sum = 0;
+    Receiver receiver;
 
-  std::shared_ptr<Blockchain> chain;
-  std::vector<AddedOutput> availibleForAddress;
+    std::shared_ptr<Blockchain> chain;
+    std::vector<AddedOutput> availibleForAddress;
 
-  serverd::server m_server;
-  serverd::miner m_miner;
-};
+    server m_server;
+    miner m_miner;
+  };
+}; // namespace ad_patres
 
 #endif // WALLET_H

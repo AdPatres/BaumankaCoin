@@ -14,7 +14,7 @@
 
 using namespace boost::asio::ip;
 namespace pt = boost::property_tree;
-using namespace serverd;
+using namespace ad_patres;
 
 template <typename Value, class Container>
 bool

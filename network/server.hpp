@@ -20,7 +20,7 @@
 #include <boost/asio/ip/tcp.hpp> // acceptor
 #include <boost/bind.hpp>
 
-namespace serverd
+namespace ad_patres
 {
   class server
   {
@@ -91,6 +91,6 @@ namespace serverd
   //   void
   //   server::m_share_handler<Block>(Block&,
   //     connection::pointer);
-} // namespace serverd
+} // namespace ad_patres
 
 #endif // SERVER_H

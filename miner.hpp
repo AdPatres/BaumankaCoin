@@ -9,12 +9,12 @@
 #include <memory> // shared_ptr, unique_ptr
 #include <thread>
 
-namespace serverd
+namespace ad_patres
 {
   class miner
   {
   public:
-    miner(serverd::server*);
+    miner(server*);
 
     ~miner();
 
@@ -31,7 +31,7 @@ namespace serverd
     void
     m_mining();
 
-    serverd::server* m_server_ptr;
+    server* m_server_ptr;
 
     std::shared_ptr<Blockchain> m_blockchain_ptr = Blockchain::instance();
     std::unique_ptr<std::thread> m_mining_th;

@@ -3,21 +3,24 @@
 #ifndef TXMSG_H
 #define TXMSG_H
 
-#include "message.hpp"
+#include "./message.hpp"
 
-namespace messages
+namespace ad_patres
 {
-  struct tx
+  namespace messages
   {
-    payload_t data;
-    const char command[command_size] = "tx";
-  };
-} // namespace messages
+    struct tx
+    {
+      payload_t data;
+      const char command[command_size] = "tx";
+    };
+  } // namespace messages
+} // namespace ad_patres
 
-messages::payload_t&
-operator<<(messages::payload_t&, const messages::tx&);
+ad_patres::messages::payload_t&
+operator<<(ad_patres::messages::payload_t&, const ad_patres::messages::tx&);
 
 std::istream&
-operator>>(std::istream&, messages::tx&);
+operator>>(std::istream&, ad_patres::messages::tx&);
 
 #endif // TXMSG_H

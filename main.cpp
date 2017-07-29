@@ -3,5 +3,5 @@
 int
 main()
 {
-  Wallet().welcome();
+  ad_patres::Wallet().welcome();
 }

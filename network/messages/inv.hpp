@@ -8,54 +8,57 @@
 #include <cstdlib>
 #include <vector>
 
-namespace messages
+namespace ad_patres
 {
-  struct inv_vect
+  namespace messages
   {
-    enum class inv_type
+    struct inv_vect
     {
-      error = 0,
-      msg_tx = 1,
-      msg_block = 2,
-    } type;
-    hash_t hash;
-  };
+      enum class inv_type
+      {
+        error = 0,
+        msg_tx = 1,
+        msg_block = 2,
+      } type;
+      hash_t hash;
+    };
 
-  hash_t
-  hash_from_32(const uint32_t value);
+    hash_t
+    hash_from_32(const uint32_t value);
 
-  uint32_t
-  hash_to_32(const hash_t& hash);
+    uint32_t
+    hash_to_32(const hash_t& hash);
 
-  struct inv
-  {
-    std::vector<inv_vect> inventory;
-    const char command[command_size] = "inv";
-  };
+    struct inv
+    {
+      std::vector<inv_vect> inventory;
+      const char command[command_size] = "inv";
+    };
 
-  struct getdata
-  {
-    std::vector<inv_vect> inventory;
-    const char command[command_size] = "getdata";
-  };
-} // namespace messages
+    struct getdata
+    {
+      std::vector<inv_vect> inventory;
+      const char command[command_size] = "getdata";
+    };
+  } // namespace messages
+} // namespace ad_patres
 
-messages::payload_t&
-operator<<(messages::payload_t&, const messages::inv_vect&);
-
-std::istream&
-operator>>(std::istream&, messages::inv_vect&);
-
-messages::payload_t&
-operator<<(messages::payload_t&, const messages::inv&);
+ad_patres::messages::payload_t&
+operator<<(ad_patres::messages::payload_t&, const ad_patres::messages::inv_vect&);
 
 std::istream&
-operator>>(std::istream&, messages::inv&);
+operator>>(std::istream&, ad_patres::messages::inv_vect&);
 
-messages::payload_t&
-operator<<(messages::payload_t&, const messages::getdata&);
+ad_patres::messages::payload_t&
+operator<<(ad_patres::messages::payload_t&, const ad_patres::messages::inv&);
 
 std::istream&
-operator>>(std::istream&, messages::getdata&);
+operator>>(std::istream&, ad_patres::messages::inv&);
+
+ad_patres::messages::payload_t&
+operator<<(ad_patres::messages::payload_t&, const ad_patres::messages::getdata&);
+
+std::istream&
+operator>>(std::istream&, ad_patres::messages::getdata&);
 
 #endif // INV_H

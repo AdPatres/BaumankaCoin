@@ -2,7 +2,7 @@
 
 #include <tuple>  // tie
 
-using namespace messages;
+using namespace ad_patres::messages;
 
 payload_t&
 operator<<(payload_t& payload, const net_addr& obj)
@@ -15,7 +15,7 @@ operator<<(payload_t& payload, const net_addr& obj)
 }
 
 std::istream&
-operator>>(std::istream& is, messages::net_addr& obj)
+operator>>(std::istream& is, net_addr& obj)
 {
   is.read(reinterpret_cast<char*>(&obj.ip), sizeof(obj.ip));
   is.read(reinterpret_cast<char*>(&obj.port), sizeof(obj.port));
@@ -23,7 +23,7 @@ operator>>(std::istream& is, messages::net_addr& obj)
 }
 
 bool
-operator!=(messages::net_addr lhs, const messages::net_addr rhs)
+operator!=(net_addr lhs, const net_addr rhs)
 {
   auto lip = boost::asio::ip::address_v4(lhs.ip);
   auto rip = boost::asio::ip::address_v4(rhs.ip);
@@ -31,7 +31,7 @@ operator!=(messages::net_addr lhs, const messages::net_addr rhs)
 }
 
 bool
-operator==(messages::net_addr lhs, const messages::net_addr rhs)
+operator==(net_addr lhs, const net_addr rhs)
 {
   auto lip = boost::asio::ip::address_v4(lhs.ip);
   auto rip = boost::asio::ip::address_v4(rhs.ip);
@@ -65,10 +65,10 @@ operator>>(std::istream& is, addr& obj)
 {
   uint32_t size = 0;
   is.read(reinterpret_cast<char*>(&size), sizeof(size));
-  obj.addr_list = std::vector<messages::net_addr>(size);
+  obj.addr_list = std::vector<net_addr>(size);
   for (size_t i = 0; i < size; ++i)
     {
-      messages::net_addr na;
+      net_addr na;
       is >> na;
       obj.addr_list[i] = na;
     }

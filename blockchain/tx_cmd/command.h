@@ -4,25 +4,27 @@
 #define COMMAND_H
 
 #include "../transaction.h"
+
 #include <botan/botan.h>
-class Command
+
+namespace ad_patres
 {
-public:
-  virtual void
-  Execute()
-    = 0;
-  virtual void
-  unExecute()
-    = 0;
-
-  void
-  setPublicKey(std::vector<byte> key)
+  class Command
   {
-    txe = Transaction(key);
-  }
+  public:
+    virtual void
+    Execute() = 0;
 
-  virtual ~Command() {}
-  static Transaction txe;
-};
+    virtual void
+    unExecute() = 0;
+
+    void
+    setPublicKey(std::vector<uint8_t> key);
+
+    virtual ~Command() = default;
+
+    static Transaction txe;
+  };
+}; // namespace ad_patres
 
 #endif // COMMAND_H

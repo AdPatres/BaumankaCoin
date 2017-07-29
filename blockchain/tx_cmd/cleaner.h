@@ -5,24 +5,22 @@
 
 #include "./command.h"
 
-class Cleaner : public Command
+namespace ad_patres
 {
-public:
-  Cleaner() = default;
-  void
-  Execute()
+  class Cleaner : public Command
   {
-    std::swap(txe, removed);
-  }
+  public:
+    Cleaner() = default;
 
-  void
-  unExecute()
-  {
-    std::swap(txe, removed);
-  }
+    void
+    Execute();
 
-private:
-  Transaction removed;
-};
+    void
+    unExecute();
+
+  private:
+    Transaction removed;
+  };
+}; // namespace ad_patre
 
 #endif // CLEANER_H

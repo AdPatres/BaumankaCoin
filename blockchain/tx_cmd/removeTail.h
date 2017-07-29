@@ -3,25 +3,24 @@
 #ifndef REMOVETAIL_H
 #define REMOVETAIL_H
 
-#include "command.h"
-class RemoveTail : public Command
+#include "./command.h"
+
+namespace ad_patres
 {
-public:
-  RemoveTail(Tail tailObj) : tail(tailObj) {}
-  void
-  Execute()
+  class RemoveTail : public Command
   {
-    txe.removeTail(tail);
-  }
+  public:
+    RemoveTail(Tail);
 
-  void
-  unExecute()
-  {
-    txe.addTail(tail);
-  }
+    void
+    Execute();
 
-private:
-  Tail tail;
-};
+    void
+    unExecute();
+
+  private:
+    Tail tail;
+  };
+}; // namespace ad_patres
 
 #endif // REMOVETAIL_H

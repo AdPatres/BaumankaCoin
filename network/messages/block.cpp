@@ -1,6 +1,6 @@
 #include "./block.hpp"
 
-using namespace messages;
+using namespace ad_patres::messages;
 
 payload_t&
 operator<<(payload_t& payload, const block_message& obj)

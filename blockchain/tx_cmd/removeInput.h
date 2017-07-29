@@ -4,29 +4,25 @@
 #define REMOVEINPUT_H
 
 #include "./command.h"
-class RemoveInput : public Command
+
+namespace ad_patres 
 {
-public:
-  RemoveInput(Output out, size_t tail, std::vector<uint8_t> hashInfo)
-  : output(out), tailNum(tail), hash(hashInfo)
+  class RemoveInput : public Command
   {
-  }
-  void
-  Execute()
-  {
-    txe.removeInput(output, tailNum, hash);
-  }
+  public:
+    RemoveInput(Output, size_t, std::vector<uint8_t>);
 
-  void
-  unExecute()
-  {
-    txe.addInput(output, tailNum, hash);
-  }
+    void
+    Execute();
 
-private:
-  Output output;
-  size_t tailNum;
-  std::vector<uint8_t> hash;
-};
+    void
+    unExecute();
+
+  private:
+    Output output;
+    size_t tailNum;
+    std::vector<uint8_t> hash;
+  };
+}; // namespace ad_patres
 
 #endif // REMOVEINPUT_H

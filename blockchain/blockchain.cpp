@@ -1,6 +1,9 @@
 #include "./blockchain.h"
 
 #include <iostream>
+
+using namespace ad_patres;
+
 std::shared_ptr<Blockchain> Blockchain::_self;
 
 Blockchain::Blockchain() {}
@@ -14,6 +17,19 @@ Blockchain::instance()
     }
   return _self;
 }
+
+size_t
+Blockchain::size() const
+{
+  return blockChain.size();
+}
+
+std::vector<uint8_t>
+Blockchain::getLastBlockData()
+{
+  return blockChain.back().getBlockData();
+}
+
 bool
 Blockchain::addBlock(Block& block)
 {

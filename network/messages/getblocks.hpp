@@ -7,19 +7,23 @@
 
 #include <vector>
 
-namespace messages
+namespace ad_patres
 {
-  struct getblocks
+  namespace messages
   {
-    hash_t hash;
-    const char command[command_size] = "getblocks";
-  };
-} // namespace messages
+    struct getblocks
+    {
+      hash_t hash;
+      const char command[command_size] = "getblocks";
+    };
+  } // namespace messages
+} // namespace ad_patres
 
-messages::payload_t&
-operator<<(messages::payload_t&, const messages::getblocks&);
+
+ad_patres::messages::payload_t&
+operator<<(ad_patres::messages::payload_t&, const ad_patres::messages::getblocks&);
 
 std::istream&
-operator>>(std::istream&, messages::getblocks&);
+operator>>(std::istream&, ad_patres::messages::getblocks&);
 
 #endif // GETBLOCKS_H

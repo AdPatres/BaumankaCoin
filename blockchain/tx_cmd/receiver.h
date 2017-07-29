@@ -3,13 +3,15 @@
 #ifndef RECEIVER_H
 #define RECEIVER_H
 
-#include "addInput.h"
-#include "addTail.h"
-#include "cleaner.h"
-#include "removeInput.h"
-#include "removeTail.h"
-#include "signer.h"
+#include "./addInput.h"
+#include "./addTail.h"
+#include "./cleaner.h"
+#include "./removeInput.h"
+#include "./removeTail.h"
+#include "./signer.h"
 
+namespace ad_patres
+{
 class Receiver
 {
   std::vector<Command*> DoneCommands;
@@ -18,73 +20,32 @@ class Receiver
 
 public:
   void
-  Initialize(std::vector<byte> key)
-  {
-    keyPublic = key;
-    command->setPublicKey(keyPublic);
-  }
-  void
-  addInput(Output output, size_t tailNum, std::vector<uint8_t> info)
-  {
-    command = new AddInput(output, tailNum, info);
-    command->Execute();
-    DoneCommands.push_back(command);
-  }
-  void
-  addTail(Tail tail)
-  {
-    command = new AddTail(tail);
-    command->Execute();
-    DoneCommands.push_back(command);
-  }
-  void
-  removeInput(Output output, size_t tailNum, std::vector<uint8_t> info)
-  {
-    command = new RemoveInput(output, tailNum, info);
-    command->Execute();
-    DoneCommands.push_back(command);
-  }
-  void
-  removeTail(Tail tail)
-  {
-    command = new RemoveTail(tail);
-    command->Execute();
-    DoneCommands.push_back(command);
-  }
-  void
-  sign(ECDSA_PrivateKey privKey)
-  {
-    command = new Signer(privKey);
-    command->Execute();
-    DoneCommands.push_back(command);
-  }
-  void
-  clear()
-  {
-    command = new Cleaner();
-    command->Execute();
-    DoneCommands.push_back(command);
-  }
-  void
-  Undo()
-  {
-    if (DoneCommands.size() == 0)
-      {
-        std::cout << "There is nothing to undo!" << std::endl;
-      }
-    else
-      {
-        command = DoneCommands.back();
-        DoneCommands.pop_back();
-        command->unExecute();
-        delete command;
-      }
-  }
+  Initialize(std::vector<byte> key);
+
   Transaction
-  get()
-  {
-    return Command::txe;
-  }
+  get() const;
+
+  void
+  addInput(Output output, size_t tailNum, std::vector<uint8_t> info);
+
+  void
+  addTail(Tail tail);
+
+  void
+  removeInput(Output output, size_t tailNum, std::vector<uint8_t> info);
+
+  void
+  removeTail(Tail tail);
+  
+  void
+  sign(ECDSA_PrivateKey privKey);
+
+  void
+  clear();
+
+  void
+  Undo();
+};
 };
 
 #endif // RECEIVER_H
