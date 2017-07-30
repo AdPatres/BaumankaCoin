@@ -72,7 +72,7 @@ Blockchain::setAvailibleTxes(Block& block)
 {
   for (size_t i = 0; i < block.txs.size(); i++)
     block.txs[i].addAvailibleTxe(Output(block.currentNumber, i),
-                                   block.txs[i].tails.size());
+                                 block.txs[i].tails.size());
 }
 
 bool
@@ -149,7 +149,8 @@ Blockchain::clearAvailibleTxes()
       for (auto j : Transaction::availibleTxes[i].usedTails)
         toRemove = j && toRemove;
       if (toRemove)
-        Transaction::availibleTxes.erase(Transaction::availibleTxes.begin() + i);
+        Transaction::availibleTxes.erase(Transaction::availibleTxes.begin()
+                                         + i);
     }
 }
 
@@ -241,7 +242,7 @@ Blockchain::restore(std::vector<std::pair<Output, size_t>> toRestore)
 {
   for (auto i : toRestore)
     for (auto counter = 0; counter < Transaction::availibleTxes.size();
-          counter++)
+         counter++)
       if (Transaction::availibleTxes[counter].output == i.first)
         Transaction::availibleTxes[counter].usedTails[i.second] = false;
 }
@@ -271,9 +272,9 @@ bool
 Blockchain::validateMerkleRoot(const Block& block)
 {
   if (!(block.txs.size() == 1 || block.txs.size() == 2 || block.txs.size() == 4
-      || block.txs.size() == 8)) // HARDCODE
+        || block.txs.size() == 8)) // HARDCODE
     return false;
-  
+
   std::vector<secure_vector<uint8_t>> hashes;
   for (auto i = 0; i < block.txs.size(); i++)
     hashes.push_back(SHA_256().process(block.txs[i].getTxeData()));
@@ -286,7 +287,7 @@ Blockchain::validateMerkleRoot(const Block& block)
             {
               secure_vector<uint8_t> tempData(hashes[i - 1]);
               for (auto j : hashes[i])
-                  tempData.push_back(j);
+                tempData.push_back(j);
               tempHashes.push_back(SHA_256().process(tempData));
             }
           hashes = tempHashes;
@@ -305,7 +306,6 @@ Blockchain::customize(size_t numberOfBlocks, secure_vector<uint8_t> address)
       if (blockChain.size() == 0)
         {
           block.setMerkleRoot();
-          // block.calculate();
           this->addBlock(block);
         }
       else
@@ -313,7 +313,6 @@ Blockchain::customize(size_t numberOfBlocks, secure_vector<uint8_t> address)
           block.setPrevBlock(blockChain.back().getBlockData());
           block.setNumber(blockChain.size());
           block.setMerkleRoot();
-          // block.calculate();
           this->addBlock(block);
         }
     }

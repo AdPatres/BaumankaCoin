@@ -55,7 +55,7 @@ ad_patres::operator<<(payload_t& payload, const inv& obj)
     payload.push_back(byte);
   for (const auto& elem : obj.inventory)
     payload << elem;
-  
+
   return payload;
 }
 
@@ -71,7 +71,7 @@ ad_patres::operator>>(std::istream& is, inv& obj)
       is >> elem;
       obj.inventory[i] = elem;
     }
-  
+
   return is;
 }
 
@@ -82,7 +82,7 @@ ad_patres::operator<<(payload_t& payload, const getdata& obj)
     payload.push_back(byte);
   for (const auto& elem : obj.inventory)
     payload << elem;
-  
+
   return payload;
 }
 
@@ -98,6 +98,6 @@ ad_patres::operator>>(std::istream& is, getdata& obj)
       is >> elem;
       obj.inventory[i] = elem;
     }
-  
+
   return is;
 }

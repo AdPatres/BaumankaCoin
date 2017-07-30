@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-namespace ad_patres 
+namespace ad_patres
 {
   struct Output
   {
@@ -22,7 +22,7 @@ namespace ad_patres
     size_t blockNumber = 0;
     size_t txeNumber = 0;
   };
-  
+
   std::ostream&
   operator<<(std::ostream& os, const ad_patres::Output& o);
 } // namespace ad_patres

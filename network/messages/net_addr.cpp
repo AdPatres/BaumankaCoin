@@ -1,6 +1,6 @@
 #include "./net_addr.hpp"
 
-#include <tuple>  // tie
+#include <tuple> // tie
 
 using namespace ad_patres::messages;
 

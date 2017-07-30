@@ -5,7 +5,7 @@
 
 #include "./command.h"
 
-namespace ad_patres 
+namespace ad_patres
 {
   class RemoveInput : public Command
   {

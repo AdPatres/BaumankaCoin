@@ -1,7 +1,7 @@
 #pragma once
 
 #ifndef NETADDR_H
-#define NETADDR_H 
+#define NETADDR_H
 
 #include "./message.hpp"
 

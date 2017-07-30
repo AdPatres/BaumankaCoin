@@ -13,7 +13,7 @@ namespace ad_patres
   {
   public:
     AddInput(Output out, size_t tail, std::vector<uint8_t>);
-    
+
     void
     Execute();
 

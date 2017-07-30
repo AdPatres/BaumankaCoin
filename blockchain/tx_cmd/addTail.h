@@ -11,7 +11,6 @@ namespace ad_patres
   {
   public:
     AddTail(Tail tailObj) : tail(tailObj) {}
-    
     void
     Execute()
     {

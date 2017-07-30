@@ -60,6 +60,8 @@ namespace ad_patres
     getLastBlockData() const;
 
   private:
+    Blockchain() = default;
+
     static std::shared_ptr<Blockchain> _self;
 
     size_t bits = 1;
@@ -75,9 +77,8 @@ namespace ad_patres
 
     // returns amount of money taken from inputs
     size_t
-    validateInputs(const Transaction&,
-                  std::vector<std::pair<Output, size_t>>);
-                            
+    validateInputs(const Transaction&, std::vector<std::pair<Output, size_t>>);
+
     bool
     validateSignature(const Transaction&);
 
@@ -92,8 +93,8 @@ namespace ad_patres
     void
     clearAvailibleTxes();
 
-    void clearNonValidated(Block); 
-    
+    void clearNonValidated(Block);
+
     std::vector<Block> blockChain;
     std::vector<Block> nonValidatedBlockChain;
   };

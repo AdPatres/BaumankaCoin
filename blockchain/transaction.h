@@ -12,7 +12,7 @@
 
 #include <botan/ecdsa.h>
 
-namespace ad_patres 
+namespace ad_patres
 {
   extern std::shared_ptr<std::shared_timed_mutex> BlockchainMutex;
   extern std::shared_ptr<std::shared_timed_mutex> TransactionsMutex;

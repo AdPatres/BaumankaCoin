@@ -12,7 +12,7 @@
 
 #include <botan/secmem.h>
 
-namespace ad_patres 
+namespace ad_patres
 {
   class Block
   {
@@ -21,7 +21,7 @@ namespace ad_patres
 
   public:
     Block() = default;
-    
+
     ~Block();
 
     std::vector<uint8_t>
@@ -46,9 +46,6 @@ namespace ad_patres
     setMerkleRoot();
 
     void
-    calculate();
-
-    void
     broadcastBlock();
 
     bool
@@ -66,14 +63,16 @@ namespace ad_patres
     void
     setHash(std::vector<uint8_t> from, uint32_t& position,
             Botan::secure_vector<uint8_t>& to);
-            
-    size_t version = 1;                                         // default value
-    Botan::secure_vector<uint8_t> prevBlock = Botan::secure_vector<uint8_t>(32, 0); // hash
+
+    size_t version = 1; // default value
+    Botan::secure_vector<uint8_t> prevBlock
+      = Botan::secure_vector<uint8_t>(32, 0); // hash
     size_t currentNumber = 0;
-    Botan::secure_vector<uint8_t> merkleRoot = Botan::secure_vector<uint8_t>(32, 0);
-    size_t bits = 1;  // Proof of work difficulty
-    size_t nonce = 0; // to change hash
-    size_t txsCount = 0; // hash untill this
+    Botan::secure_vector<uint8_t> merkleRoot
+      = Botan::secure_vector<uint8_t>(32, 0);
+    size_t bits = 1;              // Proof of work difficulty
+    size_t nonce = 0;             // to change hash
+    size_t txsCount = 0;          // hash untill this
     std::vector<Transaction> txs; // static pool for non validated txes
   };
 }; // namespace ad_patres

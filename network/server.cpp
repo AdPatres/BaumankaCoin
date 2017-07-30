@@ -19,7 +19,6 @@ using namespace boost::asio::ip;
 using namespace Botan;
 namespace pt = boost::property_tree;
 
-
 template <typename Value, class Container>
 bool
 find(const Container& c, const Value v)

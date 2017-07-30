@@ -8,20 +8,19 @@
 #include "./miner.hpp"
 #include "./network/server.hpp"
 
-#include <botan/alg_id.h>   // to intialize
-#include <botan/auto_rng.h> // rand numb gen
+// #include <botan/alg_id.h>   // to intialize
+// #include <botan/auto_rng.h> // rand numb gen
 #include <botan/ec_group.h> // groups of Eliptic curves
 #include <botan/ecdsa.h>    // privateKey on Eliptic Curve
-#include <botan/hash.h>     // with sha2 for hashing
-#include <botan/hex.h>      // to std::out from hex
+// #include <botan/hash.h>     // with sha2 for hashing
+// #include <botan/hex.h>      // to std::out from hex
 #include <botan/pkcs8.h>    // privkey in strings and vector
-#include <botan/pubkey.h>   // PK_SIGNER
+// #include <botan/pubkey.h>   // PK_SIGNER
 #include <botan/secmem.h>   // secure_vector
 #include <botan/sha2_32.h>
-#include <botan/x509_key.h> // pubkey in strings and vector
+// #include <botan/x509_key.h> // pubkey in strings and vector
 
 #include <cstdint>
-#include <iostream>
 #include <memory>
 #include <vector>
 
@@ -51,7 +50,7 @@ namespace ad_patres
     setCurrentSum();
 
     void
-    createTxe(std::istream&, std::ostream&);
+    createTxe();
 
     void
     changeMiner();
@@ -64,22 +63,22 @@ namespace ad_patres
 
   private:
     void
-    readInputs(std::istream&, std::ostream&);
+    readInputs();
 
     void
-    readTails(std::istream&, std::ostream&);
+    readTails();
 
     Botan::AutoSeeded_RNG aga;
-    Botan::EC_Group faf = Botan::EC_Group("secp256k1");
+    Botan::EC_Group faf;
+    Botan::ECDSA_PrivateKey thePrivateKey;
     Botan::secure_vector<uint8_t> encPrivateKey;
     std::vector<uint8_t> publicKey;
-    Botan::ECDSA_PrivateKey thePrivateKey = Botan::ECDSA_PrivateKey(aga, faf);
 
-    Botan::secure_vector<uint8_t> address;
+    Botan::secure_vector<uint8_t> address = Botan::SHA_256().process(publicKey);
     size_t sum = 0;
     Receiver receiver;
 
-    std::shared_ptr<Blockchain> chain;
+    std::shared_ptr<Blockchain> chain = Blockchain::instance();
     std::vector<AddedOutput> availibleForAddress;
 
     server m_server;

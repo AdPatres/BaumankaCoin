@@ -39,7 +39,8 @@ namespace ad_patres
 
   private:
     size_t intValue = 0;
-    Botan::secure_vector<uint8_t> address = Botan::secure_vector<uint8_t>(32, 0);
+    Botan::secure_vector<uint8_t> address
+      = Botan::secure_vector<uint8_t>(32, 0);
   };
 
   std::ostream&

@@ -8,23 +8,19 @@ using namespace ad_patres;
 using namespace Botan;
 
 std::shared_ptr<std::shared_timed_mutex>
-ad_patres::BlockchainMutex(new std::shared_timed_mutex);
+  ad_patres::BlockchainMutex(new std::shared_timed_mutex);
 
 std::shared_ptr<std::shared_timed_mutex>
-ad_patres::TransactionsMutex(new std::shared_timed_mutex);
+  ad_patres::TransactionsMutex(new std::shared_timed_mutex);
 
-AddedOutput::AddedOutput(Output out) 
-: output(out) 
-{ }
-
+AddedOutput::AddedOutput(Output out) : output(out) {}
 AddedOutput::AddedOutput(Output out, size_t tailsSize)
 : output(out), usedTails(tailsSize, false)
-{ }
+{
+}
 
 Transaction::~Transaction() {}
-
 Transaction::Transaction(std::vector<uint8_t> pub) : pubKey(pub) {}
-
 void
 Transaction::clear()
 {
@@ -56,7 +52,7 @@ Transaction::operator==(const Transaction& txe)
 
   if (signature != txe.signature)
     return false;
-  
+
   return true;
 }
 
@@ -121,7 +117,7 @@ Transaction::getTxeData() const
       for (auto j : data)
         info.push_back(j);
     }
-    
+
   for (auto i : tails)
     {
       std::vector<uint8_t> data = i.convertTo8();
@@ -186,7 +182,7 @@ Transaction::scanBroadcastedData(std::vector<uint8_t> data, uint32_t& position)
       pubKey.push_back(data[position]);
       position++;
     }
-    
+
   signature.clear();
   for (uint32_t i = 0; i < 64; i++) // TODO: check size
     {

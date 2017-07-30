@@ -9,7 +9,6 @@ using namespace ad_patres;
 using namespace Botan;
 
 Block::~Block() {}
-
 uint32_t
 Block::getCurrentNumber() const
 {
@@ -102,7 +101,7 @@ Block::setHash(std::vector<uint8_t> from, uint32_t& position,
 {
   to.clear();
   for (uint32_t i = 0; i < 32; i++)
-      to.push_back(from[position + i]);
+    to.push_back(from[position + i]);
   position += 32;
 }
 
@@ -130,11 +129,6 @@ Block::addTransaction(size_t num)
       return true;
     }
   return false;
-}
-
-void
-Block::calculate() // should be modified to check if last block changed
-{
 }
 
 bool

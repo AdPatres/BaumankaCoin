@@ -16,40 +16,40 @@
 
 namespace ad_patres
 {
-class Receiver
-{
-  std::vector<Command*> DoneCommands;
-  std::vector<uint8_t> keyPublic;
-  Command* command;
+  class Receiver
+  {
+    std::vector<Command*> DoneCommands;
+    std::vector<uint8_t> keyPublic;
+    Command* command;
 
-public:
-  void
-  Initialize(std::vector<uint8_t> key);
+  public:
+    void
+    Initialize(std::vector<uint8_t> key);
 
-  Transaction
-  get() const;
+    Transaction
+    get() const;
 
-  void
-  addInput(Output output, size_t tailNum, std::vector<uint8_t> info);
+    void
+    addInput(Output output, size_t tailNum, std::vector<uint8_t> info);
 
-  void
-  addTail(Tail tail);
+    void
+    addTail(Tail tail);
 
-  void
-  removeInput(Output output, size_t tailNum, std::vector<uint8_t> info);
+    void
+    removeInput(Output output, size_t tailNum, std::vector<uint8_t> info);
 
-  void
-  removeTail(Tail tail);
-  
-  void
-  sign(Botan::ECDSA_PrivateKey privKey);
+    void
+    removeTail(Tail tail);
 
-  void
-  clear();
+    void
+    sign(Botan::ECDSA_PrivateKey privKey);
 
-  void
-  Undo();
-};
+    void
+    clear();
+
+    void
+    Undo();
+  };
 };
 
 #endif // RECEIVER_H

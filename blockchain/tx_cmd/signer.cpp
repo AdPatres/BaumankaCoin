@@ -4,7 +4,6 @@ using namespace ad_patres;
 using namespace Botan;
 
 Signer::Signer(ECDSA_PrivateKey privKey) : key(privKey) {}
-
 void
 Signer::Execute()
 {

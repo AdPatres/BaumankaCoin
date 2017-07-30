@@ -15,10 +15,12 @@ namespace ad_patres
   {
   public:
     virtual void
-    Execute() = 0;
+    Execute()
+      = 0;
 
     virtual void
-    unExecute() = 0;
+    unExecute()
+      = 0;
 
     void
     setPublicKey(std::vector<uint8_t> key);

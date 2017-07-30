@@ -3,46 +3,40 @@
 using namespace ad_patres;
 using namespace Botan;
 
+#include <iostream>
+
 std::vector<AddedOutput> Transaction::availibleTxes;
 std::vector<Transaction> Block::nonValidated;
 
-Wallet::Wallet() : m_miner(&m_server)
+Wallet::Wallet() : faf(Botan::EC_Group("secp256k1")), thePrivateKey(Botan::ECDSA_PrivateKey(aga, faf)), encPrivateKey(Botan::PKCS8::BER_encode(thePrivateKey)), publicKey(thePrivateKey.subject_public_key()), m_miner(&m_server)
 {
-  AutoSeeded_RNG rng;
-  encPrivateKey = PKCS8::BER_encode(thePrivateKey); // rng, "default"
-  publicKey = thePrivateKey.subject_public_key();
-  address = SHA_256().process(publicKey);
-
   setAvailibleForAdress();
   setCurrentSum();
 
   receiver.Initialize(publicKey);
-  chain = Blockchain::instance();
 
   m_server.start();
 }
 
-Wallet::Wallet(secure_vector<byte> priv, std::vector<byte> pub)
-: encPrivateKey(priv), publicKey(pub),
-  thePrivateKey(AlgorithmIdentifier(), encPrivateKey), m_miner(&m_server)
+Wallet::Wallet(secure_vector<uint8_t> priv, std::vector<uint8_t> pub)
+: thePrivateKey(AlgorithmIdentifier(), priv), encPrivateKey(priv), publicKey(pub), m_miner(&m_server)
 {
-  address = SHA_256().process(publicKey);
   receiver.Initialize(publicKey);
-  chain = Blockchain::instance();
-
-  // m_server.start();
 }
 
 Wallet&
-Wallet::operator=(const Wallet& v2)
+Wallet::operator=(const Wallet& oth)
 {
-  encPrivateKey = v2.encPrivateKey;
-  publicKey = v2.publicKey;
-  faf = v2.faf;
-  thePrivateKey = v2.thePrivateKey;
-  address = v2.address;
-
-  // m_server = v2.m_server;
+  if (this != &oth)
+    {
+      encPrivateKey = oth.encPrivateKey;
+      publicKey = oth.publicKey;
+      faf = oth.faf;
+      thePrivateKey = oth.thePrivateKey;
+      address = oth.address;
+    }
+  
+  return *this;
 }
 
 Wallet::~Wallet() { m_server.stop(); }
@@ -99,8 +93,8 @@ Wallet::welcome()
     {
       case ('1'):
         {
-          secure_vector<byte> priv;
-          std::vector<byte> pub;
+          secure_vector<uint8_t> priv;
+          std::vector<uint8_t> pub;
           for (size_t i = 0; i < 287; i++)
             {
               char info;
@@ -146,12 +140,13 @@ Wallet::commandProg()
         commandProg();
         break;
       case ('2'):
-        createTxe(std::cin, std::cout);
+        createTxe();
         commandProg();
         break;
       case ('3'):
         changeMiner();
         commandProg();
+        break;
       default:
         std::cout << "you did smth wrong try again" << std::endl;
         welcome();
@@ -160,7 +155,7 @@ Wallet::commandProg()
 }
 
 void
-Wallet::readInputs(std::istream& is, std::ostream& os)
+Wallet::readInputs()
 {
   uint8_t answer = 'y';
   while (answer == 'y')
@@ -168,45 +163,45 @@ Wallet::readInputs(std::istream& is, std::ostream& os)
       size_t blockNum = 0;
       size_t txeNum = 0;
       size_t tail = 0;
-      os << "Enter block num \n";
-      is >> blockNum;
-      os << "Enter txe num \n";
-      is >> txeNum;
-      os << "Enter tail num \n";
-      is >> tail;
+      std::cout << "Enter block num \n";
+      std::cin >> blockNum;
+      std::cout << "Enter txe num \n";
+      std::cin >> txeNum;
+      std::cout << "Enter tail num \n";
+      std::cin >> tail;
       receiver.addInput(Output(blockNum, txeNum), tail,
                         chain->blockChain[blockNum].txs[txeNum].getTxeData());
-      os << "add more inputs? y-yes, else - no";
-      is >> answer;
+      std::cout << "add more inputs? y-yes, else - no";
+      std::cin >> answer;
     }
 }
 
 void
-Wallet::readTails(std::istream& is, std::ostream& os)
+Wallet::readTails()
 {
-  os << "Now enter tails\n";
+  std::cout << "Now enter tails\n";
   uint8_t answer = 'y';
   while (answer == 'y')
     {
-      os << "First enter addr\n";
-      secure_vector<byte> addr;
+      std::cout << "First enter addr\n";
+      secure_vector<uint8_t> addr;
       uint8_t input;
       while (input != '\n')
         {
-          is >> input;
+          std::cin >> input;
           addr.push_back(input);
         }
       size_t money = 0;
-      os << "Now enter money to send on that addr";
-      is >> money;
+      std::cout << "Now enter money to send on that addr";
+      std::cin >> money;
       receiver.addTail(Tail(money, addr));
-      os << "add more tails? y-yes, else - no";
-      is >> answer;
+      std::cout << "add more tails? y-yes, else - no";
+      std::cin >> answer;
     }
 }
 
 void
-Wallet::createTxe(std::istream& is, std::ostream& os)
+Wallet::createTxe()
 {
   if (sum == 0)
     {
@@ -215,11 +210,11 @@ Wallet::createTxe(std::istream& is, std::ostream& os)
     }
   receiver.clear();
 
-  os << "First add Inputs\n";
+  std::cout << "First add Inputs\n";
   BlockchainMutex->lock_shared();
   for (const auto i : availibleForAddress)
     {
-      for (auto j = 0; j < chain->blockChain[i.output.blockNumber]
+      for (size_t j = 0; j < chain->blockChain[i.output.blockNumber]
                              .txs[i.output.txeNumber]
                              .tails.size();
            j++)
@@ -230,20 +225,20 @@ Wallet::createTxe(std::istream& is, std::ostream& os)
                 .second
               == address
             && !i.usedTails[j])
-          os << "Block Number: " << i.output.blockNumber
-             << " Txe Number: " << i.output.txeNumber << " Tail Number: " << j
-             << " Ammount of money: "
-             << chain->blockChain[i.output.blockNumber]
-                  .txs[i.output.txeNumber]
-                  .tails[j]
-                  .getInfo()
-                  .first
-             << std::endl;
+          std::cout << "Block Number: " << i.output.blockNumber
+                    << " Txe Number: " << i.output.txeNumber
+                    << " Tail Number: " << j << " Ammount of money: "
+                    << chain->blockChain[i.output.blockNumber]
+                         .txs[i.output.txeNumber]
+                         .tails[j]
+                         .getInfo()
+                         .first
+                    << std::endl;
     }
 
   BlockchainMutex->lock_shared();
-  readInputs(is, os);
-  readTails(is, os);
+  readInputs();
+  readTails();
   receiver.sign(thePrivateKey);
   auto tx = receiver.get();
   m_server.share(tx);
@@ -256,7 +251,7 @@ Wallet::setCurrentSum()
 
   for (auto i : availibleForAddress)
     {
-      for (auto j = 0; j < chain->blockChain[i.output.blockNumber]
+      for (size_t j = 0; j < chain->blockChain[i.output.blockNumber]
                              .txs[i.output.txeNumber]
                              .tails.size();
            j++)
@@ -273,17 +268,17 @@ Wallet::setCurrentSum()
                    .getInfo()
                    .first;
     }
-    
+
   BlockchainMutex->unlock_shared();
 }
 
-std::vector<secure_vector<byte>>
+std::vector<secure_vector<uint8_t>>
 Wallet::getHashesAfter(uint64_t idx) const
 {
   BlockchainMutex->lock_shared();
 
   ++idx;
-  std::vector<secure_vector<byte>> res(chain->blockChain.size() - idx);
+  std::vector<secure_vector<uint8_t>> res(chain->blockChain.size() - idx);
   for (size_t i = idx, j = 0; i < chain->blockChain.size(); ++i, ++j)
     res[j] = SHA_256().process(chain->blockChain[i].getBlockData());
 

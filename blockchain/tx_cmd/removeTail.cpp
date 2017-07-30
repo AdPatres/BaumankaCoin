@@ -3,7 +3,6 @@
 using namespace ad_patres;
 
 RemoveTail::RemoveTail(Tail tailObj) : tail(tailObj) {}
-
 void
 RemoveTail::Execute()
 {

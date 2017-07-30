@@ -19,13 +19,13 @@ namespace ad_patres
 
     ~Input();
 
-    bool setOutput(size_t, size_t);
+    void setOutput(size_t, size_t);
 
-    bool setOutput(Output);
+    void setOutput(Output);
 
-    bool setHash(std::vector<uint8_t>);
+    void setHash(std::vector<uint8_t>);
 
-    bool setTailNum(size_t);
+    void setTailNum(size_t);
 
     bool
     scan(std::vector<uint8_t>, uint32_t&);
@@ -46,7 +46,8 @@ namespace ad_patres
 
   private:
     Output output;
-    Botan::secure_vector<uint8_t> outputHash = Botan::secure_vector<uint8_t>(32, 0);
+    Botan::secure_vector<uint8_t> outputHash
+      = Botan::secure_vector<uint8_t>(32, 0);
     size_t tailNum = 0;
   };
 

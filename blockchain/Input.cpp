@@ -8,28 +8,25 @@ using namespace Botan;
 
 Input::~Input() {}
 
-bool
+void
 Input::setOutput(Output out)
 {
   output = out;
-  return true;
 }
 
-bool
+void
 Input::setOutput(size_t blockNum, size_t txeNum)
 {
   output = Output(blockNum, txeNum);
-  return true;
 }
 
-bool
+void
 Input::setTailNum(size_t num)
 {
   tailNum = num;
-  return true;
 }
 
-bool
+void
 Input::setHash(std::vector<uint8_t> info)
 {
   outputHash = SHA_256().process(info);

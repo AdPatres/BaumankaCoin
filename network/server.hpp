@@ -4,11 +4,11 @@
 #define SERVER_H
 
 #include "../blockchain/blockchain.h"
+#include "./connection.hpp"
 #include "./messages/block.hpp"
 #include "./messages/inv.hpp"
 #include "./messages/net_addr.hpp"
 #include "./messages/tx.hpp"
-#include "./connection.hpp"
 
 #include <cstdint>
 #include <forward_list>
