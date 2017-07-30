@@ -4,13 +4,20 @@ using namespace ad_patres;
 using namespace Botan;
 
 #include <iostream>
+#include <utility> // move
+
+#include <botan/pkcs8.h>
 
 std::vector<AddedOutput> Transaction::availibleTxes;
 std::vector<Transaction> Block::nonValidated;
 
-Wallet::Wallet() : faf(Botan::EC_Group("secp256k1")), thePrivateKey(Botan::ECDSA_PrivateKey(aga, faf)), encPrivateKey(Botan::PKCS8::BER_encode(thePrivateKey)), publicKey(thePrivateKey.subject_public_key()), m_miner(&m_server)
+Wallet::Wallet()
+: faf(Botan::EC_Group("secp256k1")),
+  thePrivateKey(Botan::ECDSA_PrivateKey(aga, faf)),
+  encPrivateKey(Botan::PKCS8::BER_encode(thePrivateKey)),
+  publicKey(thePrivateKey.subject_public_key()), m_miner(&m_server)
 {
-  setAvailibleForAdress();
+  setAvailaibleForAddress();
   setCurrentSum();
 
   receiver.Initialize(publicKey);
@@ -19,11 +26,13 @@ Wallet::Wallet() : faf(Botan::EC_Group("secp256k1")), thePrivateKey(Botan::ECDSA
 }
 
 Wallet::Wallet(secure_vector<uint8_t> priv, std::vector<uint8_t> pub)
-: thePrivateKey(AlgorithmIdentifier(), priv), encPrivateKey(priv), publicKey(pub), m_miner(&m_server)
+: thePrivateKey(AlgorithmIdentifier(), priv), encPrivateKey(priv),
+  publicKey(pub), m_miner(&m_server)
 {
   receiver.Initialize(publicKey);
 }
 
+Wallet::~Wallet() { m_server.stop(); }
 Wallet&
 Wallet::operator=(const Wallet& oth)
 {
@@ -35,31 +44,35 @@ Wallet::operator=(const Wallet& oth)
       thePrivateKey = oth.thePrivateKey;
       address = oth.address;
     }
-  
+
   return *this;
 }
 
-Wallet::~Wallet() { m_server.stop(); }
-secure_vector<uint8_t>
-Wallet::getAddress() const
-{
-  return address;
-}
+// secure_vector<uint8_t>
+// Wallet::getAddress() const
+// {
+//   return address;
+// }
+
+// std::vector<secure_vector<uint8_t>>
+// Wallet::getHashesAfter(uint64_t idx) const
+// {
+//   BlockchainMutex->lock_shared();
+
+//   ++idx;
+//   std::vector<secure_vector<uint8_t>> res(chain->blockChain.size() - idx);
+//   for (size_t i = idx, j = 0; i < chain->blockChain.size(); ++i, ++j)
+//     res[j] = SHA_256().process(chain->blockChain[i].getBlockData());
+
+//   BlockchainMutex->unlock_shared();
+//   return std::move(res);
+// }
 
 void
-Wallet::changeMiner()
-{
-  if (m_miner.getState())
-    m_miner.stop();
-  else
-    m_miner.start();
-}
-
-void
-Wallet::setAvailibleForAdress()
+Wallet::setAvailaibleForAddress()
 {
   BlockchainMutex->lock_shared();
-  availibleForAddress.clear();
+  availableForAddress.clear();
 
   for (auto& i : Transaction::availibleTxes)
     {
@@ -74,10 +87,47 @@ Wallet::setAvailibleForAdress()
                 .second
               == address
             && !i.usedTails[j])
-          availibleForAddress.push_back(i);
+          availableForAddress.push_back(i);
     }
 
   BlockchainMutex->unlock_shared();
+}
+
+void
+Wallet::setCurrentSum()
+{
+  BlockchainMutex->lock_shared();
+
+  for (auto i : availableForAddress)
+    {
+      for (size_t j = 0; j < chain->blockChain[i.output.blockNumber]
+                               .txs[i.output.txeNumber]
+                               .tails.size();
+           j++)
+        if (chain->blockChain[i.output.blockNumber]
+                .txs[i.output.txeNumber]
+                .tails[j]
+                .getInfo()
+                .second
+              == address
+            && !i.usedTails[j])
+          sum += chain->blockChain[i.output.blockNumber]
+                   .txs[i.output.txeNumber]
+                   .tails[j]
+                   .getInfo()
+                   .first;
+    }
+
+  BlockchainMutex->unlock_shared();
+}
+
+void
+Wallet::changeMiner()
+{
+  if (m_miner.getState())
+    m_miner.stop();
+  else
+    m_miner.start();
 }
 
 void
@@ -135,7 +185,7 @@ Wallet::commandProg()
   switch (c)
     {
       case ('1'):
-        setAvailibleForAdress();
+        setAvailaibleForAddress();
         setCurrentSum();
         commandProg();
         break;
@@ -212,11 +262,11 @@ Wallet::createTxe()
 
   std::cout << "First add Inputs\n";
   BlockchainMutex->lock_shared();
-  for (const auto i : availibleForAddress)
+  for (const auto i : availableForAddress)
     {
       for (size_t j = 0; j < chain->blockChain[i.output.blockNumber]
-                             .txs[i.output.txeNumber]
-                             .tails.size();
+                               .txs[i.output.txeNumber]
+                               .tails.size();
            j++)
         if (chain->blockChain[i.output.blockNumber]
                 .txs[i.output.txeNumber]
@@ -235,53 +285,11 @@ Wallet::createTxe()
                          .first
                     << std::endl;
     }
+  BlockchainMutex->unlock_shared();
 
-  BlockchainMutex->lock_shared();
   readInputs();
   readTails();
   receiver.sign(thePrivateKey);
   auto tx = receiver.get();
   m_server.share(tx);
-}
-
-void
-Wallet::setCurrentSum()
-{
-  BlockchainMutex->lock_shared();
-
-  for (auto i : availibleForAddress)
-    {
-      for (size_t j = 0; j < chain->blockChain[i.output.blockNumber]
-                             .txs[i.output.txeNumber]
-                             .tails.size();
-           j++)
-        if (chain->blockChain[i.output.blockNumber]
-                .txs[i.output.txeNumber]
-                .tails[j]
-                .getInfo()
-                .second
-              == address
-            && !i.usedTails[j])
-          sum += chain->blockChain[i.output.blockNumber]
-                   .txs[i.output.txeNumber]
-                   .tails[j]
-                   .getInfo()
-                   .first;
-    }
-
-  BlockchainMutex->unlock_shared();
-}
-
-std::vector<secure_vector<uint8_t>>
-Wallet::getHashesAfter(uint64_t idx) const
-{
-  BlockchainMutex->lock_shared();
-
-  ++idx;
-  std::vector<secure_vector<uint8_t>> res(chain->blockChain.size() - idx);
-  for (size_t i = idx, j = 0; i < chain->blockChain.size(); ++i, ++j)
-    res[j] = SHA_256().process(chain->blockChain[i].getBlockData());
-
-  BlockchainMutex->unlock_shared();
-  return std::move(res);
 }

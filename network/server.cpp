@@ -251,7 +251,7 @@ server::m_handshake(const boost::system::error_code& ec,
     msg = peer_ptr->receive();
     assert(msg.first == "addr");
     auto addr_list = messages::create<messages::addr>(msg.second);
-    for (auto addr : addr_list.addr_list)
+    for (const auto& addr : addr_list.addr_list)
       if (!find(m_peers, addr))
         m_connect(tcp::endpoint(address_v4(addr.ip), addr.port),
                   boost::bind(&server::m_handshake, this, _1, _2));

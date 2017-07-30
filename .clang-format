@@ -1,6 +1,5 @@
 ---
 Language:        Cpp
-# BasedOnStyle:  LLVM
 AccessModifierOffset: -2
 AlignAfterOpenBracket: Align
 AlignConsecutiveAssignments: false
@@ -21,7 +20,7 @@ AlwaysBreakTemplateDeclarations: true
 BinPackArguments: true
 BinPackParameters: true
 BraceWrapping:   
-  AfterClass:      false
+  AfterClass:      true
   AfterControlStatement: true
   AfterEnum:       true
   AfterFunction:   true
@@ -32,24 +31,18 @@ BraceWrapping:
   BeforeCatch:     true
   BeforeElse:      true
   IndentBraces:    true
-#  SplitEmptyFunctionBody: true
-# BreakAfterJavaFieldAnnotations: true
 BreakBeforeBinaryOperators: All
 BreakBeforeBraces: GNU
-# BreakBeforeInheritanceComma: false
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializersBeforeComma: false
-# BreakStringLiterals: true
 ColumnLimit:     80
 CommentPragmas:  '^ IWYU pragma:'
-# CompactNamespaces: false
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
 ConstructorInitializerIndentWidth: 0
 ContinuationIndentWidth: 2
 Cpp11BracedListStyle: true
 DerivePointerAlignment: false
 DisableFormat:   false
-# FixNamespaceComments: true
 ExperimentalAutoDetectBinPacking: false
 ForEachMacros:   [ foreach, Q_FOREACH, BOOST_FOREACH ]
 IncludeCategories: 
@@ -62,8 +55,6 @@ IncludeCategories:
 IndentCaseLabels: true
 IndentWidth:     2
 IndentWrappedFunctionNames: false
-# JavaScriptQuotes: Leave
-# JavaScriptWrapImports: true
 KeepEmptyLinesAtTheStartOfBlocks: false
 MacroBlockBegin: ''
 MacroBlockEnd:   ''
@@ -83,7 +74,6 @@ ReflowComments:  true
 SortIncludes:    true
 SpaceAfterCStyleCast: false
 SpaceBeforeAssignmentOperators: true
-# SpaceAfterTemplateKeyword: false
 SpaceBeforeAssignmentOperators: true
 SpaceBeforeParens: ControlStatements
 SpaceInEmptyParentheses: false

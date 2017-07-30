@@ -7,7 +7,6 @@ using namespace ad_patres;
 using namespace Botan;
 
 Input::~Input() {}
-
 void
 Input::setOutput(Output out)
 {

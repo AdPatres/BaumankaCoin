@@ -70,7 +70,7 @@ Blockchain::validateBlockChain()
 void
 Blockchain::setAvailibleTxes(Block& block)
 {
-  for (size_t i = 0; i < block.txs.size(); i++)
+  for (size_t i = 0; i < block.txs.size(); ++i)
     block.txs[i].addAvailibleTxe(Output(block.currentNumber, i),
                                  block.txs[i].tails.size());
 }
@@ -95,7 +95,7 @@ Blockchain::validateBlock(Block& block)
 
   secure_vector<uint8_t> hash = SHA_256().process(block.getBlockData());
   bool validated = true;
-  // for (auto i = 0; i < bits; i++) reuturn for hash checks
+  // for (auto i = 0; i < bits; ++i) reuturn for hash checks
   // {
   // 	if (hash[i] != 0)
   // 		validated = false;
@@ -105,7 +105,7 @@ Blockchain::validateBlock(Block& block)
   else
     validated = false;
 
-  for (auto i = 1; i < block.txs.size(); i++)
+  for (size_t i = 1; i < block.txs.size(); ++i)
     {
       std::vector<std::pair<Output, size_t>> toRestore;
       validated = validated && validateTxn(block.txs[i], toRestore);
@@ -134,7 +134,7 @@ Blockchain::clearNonValidated(Block block)
 {
   TransactionsMutex->lock();
   for (auto tx : block.txs)
-    for (size_t i = 0; i < Block::nonValidated.size(); i++)
+    for (size_t i = 0; i < Block::nonValidated.size(); ++i)
       if (Block::nonValidated[i] == tx)
         Block::nonValidated.erase(Block::nonValidated.begin() + i);
   TransactionsMutex->unlock();
@@ -143,7 +143,7 @@ Blockchain::clearNonValidated(Block block)
 void
 Blockchain::clearAvailibleTxes()
 {
-  for (auto i = 0; i < Transaction::availibleTxes.size(); i++)
+  for (size_t i = 0; i < Transaction::availibleTxes.size(); ++i)
     {
       bool toRemove = true;
       for (auto j : Transaction::availibleTxes[i].usedTails)
@@ -176,9 +176,10 @@ Blockchain::validateInputs(const Transaction& txn,
   for (auto i : txn.inputs) // because of first TXE use iterators;
     {
       std::pair<Output, size_t> info = i.getInfo();
-      auto counter = 0;
+      // auto counter = 0;
       bool found = false;
-      for (counter; counter < Transaction::availibleTxes.size(); counter++)
+      for (size_t counter = 0; counter < Transaction::availibleTxes.size();
+           ++counter)
         {
           if (Transaction::availibleTxes[counter].output
               == info.first) // Output operator
@@ -233,16 +234,15 @@ Blockchain::validateTails(const Transaction& txn, size_t sum)
   size_t sendMoney = 0;
   for (auto i : txn.tails)
     sendMoney += i.getInfo().first;
-  if (sendMoney <= sum)
-    return true;
+  return sendMoney <= sum;
 }
 
 void
 Blockchain::restore(std::vector<std::pair<Output, size_t>> toRestore)
 {
   for (auto i : toRestore)
-    for (auto counter = 0; counter < Transaction::availibleTxes.size();
-         counter++)
+    for (size_t counter = 0; counter < Transaction::availibleTxes.size();
+         ++counter)
       if (Transaction::availibleTxes[counter].output == i.first)
         Transaction::availibleTxes[counter].usedTails[i.second] = false;
 }
@@ -276,12 +276,12 @@ Blockchain::validateMerkleRoot(const Block& block)
     return false;
 
   std::vector<secure_vector<uint8_t>> hashes;
-  for (auto i = 0; i < block.txs.size(); i++)
+  for (size_t i = 0; i < block.txs.size(); ++i)
     hashes.push_back(SHA_256().process(block.txs[i].getTxeData()));
   while (hashes.size() != 1)
     {
       std::vector<secure_vector<uint8_t>> tempHashes;
-      for (auto i = 0; i < hashes.size(); i++)
+      for (size_t i = 0; i < hashes.size(); ++i)
         {
           if (i % 2 == 1)
             {
@@ -299,7 +299,7 @@ Blockchain::validateMerkleRoot(const Block& block)
 void
 Blockchain::customize(size_t numberOfBlocks, secure_vector<uint8_t> address)
 {
-  for (size_t i = 0; i < numberOfBlocks; i++)
+  for (size_t i = 0; i < numberOfBlocks; ++i)
     {
       Block block;
       block.addFirstTxe(address);
@@ -346,7 +346,7 @@ Blockchain::getBlocksAfter(uint64_t idx) const
 int64_t
 Blockchain::findByHash(secure_vector<uint8_t> hash)
 {
-  for (int64_t i = 0; i < blockChain.size(); ++i)
+  for (size_t i = 0; i < blockChain.size(); ++i)
     if (SHA_256().process(blockChain[i].getBlockData()) == hash)
       return i;
   return -1;

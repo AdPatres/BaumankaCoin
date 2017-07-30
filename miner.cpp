@@ -69,7 +69,7 @@ miner::m_mining()
           BlockchainMutex->unlock_shared();
 
           secure_vector<byte> hash = SHA_256().process(block.getBlockData());
-          for (auto i = 0; i < m_bits; i++)
+          for (uint64_t i = 0; i < m_bits; ++i)
             {
               if (hash[i] != 0)
                 break;

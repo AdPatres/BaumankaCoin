@@ -59,7 +59,7 @@ Block::setNumber(size_t num)
   currentNumber = num;
 }
 
-bool
+void
 Block::setPrevBlock(std::vector<uint8_t> data)
 {
   prevBlock = SHA_256().process(data);
@@ -72,12 +72,12 @@ Block::setMerkleRoot()
       || txs.size() == 8) // HARDCODE
     {
       std::vector<secure_vector<uint8_t>> hashes;
-      for (auto i = 0; i < txs.size(); i++)
+      for (size_t i = 0; i < txs.size(); i++)
         hashes.push_back(SHA_256().process(txs[i].getTxeData()));
       while (hashes.size() != 1)
         {
           std::vector<secure_vector<uint8_t>> tempHashes;
-          for (auto i = 0; i < hashes.size(); i++)
+          for (size_t i = 0; i < hashes.size(); i++)
             {
               if (i % 2 == 1)
                 {

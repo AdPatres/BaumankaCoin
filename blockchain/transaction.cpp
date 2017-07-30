@@ -90,14 +90,12 @@ bool
 Transaction::removeTail(Tail tail)
 {
   for (size_t i = 1; i < tails.size(); i++)
-    {
-      if (tails[i] == tail)
-        {
-          tails.erase(tails.begin() + i);
-          return true;
-        }
-      return false;
-    }
+    if (tails[i] == tail)
+      {
+        tails.erase(tails.begin() + i);
+        return true;
+      }
+  return false;
 }
 
 bool

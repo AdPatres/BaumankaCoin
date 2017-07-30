@@ -20,14 +20,14 @@ namespace ad_patres
 
     ~miner();
 
+    bool
+    getState();
+
     void
     start();
 
     void
     stop();
-
-    bool
-    getState();
 
   private:
     void
@@ -37,9 +37,10 @@ namespace ad_patres
 
     std::shared_ptr<Blockchain> m_blockchain_ptr = Blockchain::instance();
     std::unique_ptr<std::thread> m_mining_th;
+    bool state = false;
+
     Botan::secure_vector<uint8_t> m_local_address;
     uint64_t m_bits = 1;
-    bool state = false;
   };
 } // namespace serverd
 

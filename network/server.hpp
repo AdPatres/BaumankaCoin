@@ -68,9 +68,9 @@ namespace ad_patres
 
     void m_handle_version(connection::pointer, auto);
 
-    template <class T>
-    void
-    m_share_handler(T&, connection::pointer);
+    // template <class T>
+    // void
+    // m_share_handler(T&, connection::pointer);
 
     boost::asio::io_service m_ios;
     boost::asio::ip::tcp::acceptor m_acceptor;

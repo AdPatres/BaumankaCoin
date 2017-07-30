@@ -40,7 +40,7 @@ namespace ad_patres
 
     bool addTransaction(size_t = nonValidated.size());
 
-    bool setPrevBlock(std::vector<uint8_t>);
+    void setPrevBlock(std::vector<uint8_t>);
 
     bool
     setMerkleRoot();
