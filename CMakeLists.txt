@@ -7,8 +7,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++17 -Wall")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 
-include_directories (/usr/local/include/botan-2)
-link_directories(/usr/local/lib/)
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/" ${CMAKE_MODULE_PATH})
+find_package(BOTAN REQUIRED)
+include_directories(${BOTAN_INCLUDE_DIRS})
+link_directories(${BOTAN_LIBRARIES})
 
 include_directories (blockchain network)
 
