@@ -2,7 +2,8 @@ cmake_minimum_required (VERSION 3.0)
 
 project (AdPatres)
 
-include_directories (/usr/local/include/botan-2)
+find_package(BOTAN REQUIRED)
+include_directories(${BOTAN_INCLUDE_DIRS})
 
 add_library (command command.cpp command.h)
 add_library (cmd_input addInput.cpp removeInput.cpp addInput.h removeInput.h)
