@@ -4,6 +4,7 @@
 
 #include <botan/pubkey.h>
 #include <botan/sha2_32.h>
+#include <botan/x509cert.h>
 
 using namespace ad_patres;
 using namespace Botan;
